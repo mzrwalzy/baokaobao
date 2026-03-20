@@ -52,6 +52,6 @@ uploads/
 # Go dependencies
 go.sum
 
-# Admin frontend
-admin/node_modules/
-admin/dist/
+# Frontend
+frontend/node_modules/
+frontend/dist/
