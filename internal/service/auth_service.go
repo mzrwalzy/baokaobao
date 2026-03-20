@@ -66,7 +66,8 @@ func (s *AuthService) LoginByWechat(code string) (*LoginResponse, error) {
 		return nil, model.ErrUserBanned
 	}
 
-	user.LastLogin = time.Now()
+	now := time.Now()
+	user.LastLogin = &now
 	s.repo.UpdateUser(user)
 
 	token, err := s.jwtSDK.GenerateToken(user.ID, user.OpenID, "mini")
@@ -103,7 +104,8 @@ func (s *AuthService) AdminLogin(req *AdminLoginRequest) (*AdminLoginResponse, e
 		return nil, model.ErrInvalidCredentials
 	}
 
-	admin.LastLogin = time.Now()
+	now := time.Now()
+	admin.LastLogin = &now
 	s.repo.UpdateAdmin(admin)
 
 	token, err := s.jwtSDK.GenerateToken(admin.ID, admin.Username, "admin")

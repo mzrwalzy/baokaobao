@@ -16,16 +16,18 @@
           </template>
         </el-table-column>
         <el-table-column prop="phone" label="手机号" width="130" />
+        <el-table-column label="已购题库" width="120">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="handleViewBanks(row)">
+              {{ row.bankCount || 0 }} 个题库
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">
               {{ row.status === 1 ? '正常' : '禁用' }}
             </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="last_login" label="最后登录" width="180">
-          <template #default="{ row }">
-            {{ formatTime(row.last_login) }}
           </template>
         </el-table-column>
         <el-table-column prop="created_at" label="注册时间" width="180">
@@ -35,7 +37,7 @@
         </el-table-column>
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">
-            <el-button link type="danger" @click="handleToggleStatus(row)">
+            <el-button link type="primary" @click="handleToggleStatus(row)">
               {{ row.status === 1 ? '禁用' : '启用' }}
             </el-button>
           </template>
@@ -53,12 +55,22 @@
         />
       </div>
     </div>
+
+    <el-dialog v-model="bankDialogVisible" title="用户已购题库" width="500px">
+      <el-empty v-if="!userBanks.length" description="该用户暂未购买任何题库" />
+      <div v-else class="bank-list">
+        <div v-for="bank in userBanks" :key="bank.id" class="bank-item">
+          <span class="bank-name">{{ bank.name }}</span>
+          <span class="bank-price">¥{{ bank.price }}</span>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getUsers, updateUserStatus } from '@/api'
+import { getUsers, updateUserStatus, getUserDetail } from '@/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import dayjs from 'dayjs'
 
@@ -67,6 +79,8 @@ const list = ref([])
 const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
+const bankDialogVisible = ref(false)
+const userBanks = ref([])
 
 const loadData = async () => {
   loading.value = true
@@ -78,6 +92,16 @@ const loadData = async () => {
     console.error(e)
   } finally {
     loading.value = false
+  }
+}
+
+const handleViewBanks = async (row) => {
+  try {
+    const data = await getUserDetail(row.id)
+    userBanks.value = data.banks || []
+    bankDialogVisible.value = true
+  } catch (e) {
+    console.error(e)
   }
 }
 
@@ -104,5 +128,28 @@ onMounted(loadData)
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.bank-list {
+  .bank-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .bank-name {
+      font-weight: 500;
+    }
+    
+    .bank-price {
+      color: #f59e0b;
+      font-weight: 600;
+    }
+  }
 }
 </style>

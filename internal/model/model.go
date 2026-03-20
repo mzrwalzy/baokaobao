@@ -5,16 +5,16 @@ import (
 )
 
 type User struct {
-	ID        int64     `gorm:"primaryKey;autoIncrement" json:"id"`
-	OpenID    string    `gorm:"type:varchar(128);uniqueIndex;not null" json:"openid"`
-	UnionID   string    `gorm:"type:varchar(128);index" json:"unionid"`
-	Nickname  string    `gorm:"type:varchar(64)" json:"nickname"`
-	AvatarURL string    `gorm:"type:varchar(256)" json:"avatar_url"`
-	Phone     string    `gorm:"type:varchar(32);uniqueIndex" json:"phone"`
-	Status    int8      `gorm:"type:tinyint(1);default:1;index" json:"status"`
-	LastLogin time.Time `json:"last_login"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        int64      `gorm:"primaryKey;autoIncrement" json:"id"`
+	OpenID    string     `gorm:"type:varchar(128);uniqueIndex;not null" json:"openid"`
+	UnionID   string     `gorm:"type:varchar(128);index" json:"unionid"`
+	Nickname  string     `gorm:"type:varchar(64)" json:"nickname"`
+	AvatarURL string     `gorm:"type:varchar(256)" json:"avatar_url"`
+	Phone     string     `gorm:"type:varchar(32);uniqueIndex" json:"phone"`
+	Status    int8       `gorm:"type:tinyint(1);default:1;index" json:"status"`
+	LastLogin *time.Time `json:"last_login,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
 }
 
 func (User) TableName() string {
@@ -22,15 +22,15 @@ func (User) TableName() string {
 }
 
 type AdminUser struct {
-	ID           int64     `gorm:"primaryKey;autoIncrement" json:"id"`
-	Username     string    `gorm:"type:varchar(64);uniqueIndex;not null" json:"username"`
-	PasswordHash string    `gorm:"type:varchar(256);not null" json:"-"`
-	Nickname     string    `gorm:"type:varchar(64)" json:"nickname"`
-	Role         string    `gorm:"type:varchar(32);default:admin" json:"role"`
-	Status       int8      `gorm:"type:tinyint(1);default:1" json:"status"`
-	LastLogin    time.Time `json:"last_login"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID           int64      `gorm:"primaryKey;autoIncrement" json:"id"`
+	Username     string     `gorm:"type:varchar(64);uniqueIndex;not null" json:"username"`
+	PasswordHash string     `gorm:"type:varchar(256);not null" json:"-"`
+	Nickname     string     `gorm:"type:varchar(64)" json:"nickname"`
+	Role         string     `gorm:"type:varchar(32);default:admin" json:"role"`
+	Status       int8       `gorm:"type:tinyint(1);default:1" json:"status"`
+	LastLogin    *time.Time `json:"last_login,omitempty"`
+	CreatedAt    time.Time  `json:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at"`
 }
 
 func (AdminUser) TableName() string {

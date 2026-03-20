@@ -75,3 +75,7 @@ func (s *AdminService) CreateAdminUser(username, password, nickname string) erro
 
 	return s.repo.CreateAdmin(admin)
 }
+
+func (s *AdminService) GetUserPurchasedBanks(userID int64) ([]model.QuestionBank, error) {
+	return s.repo.GetUserPurchasedBanks(userID)
+}

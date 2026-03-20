@@ -310,7 +310,13 @@ func (h *Handler) GetUserDetail(c *gin.Context) {
 		response.NotFound(c, "用户不存在")
 		return
 	}
-	response.Success(c, user)
+
+	banks, _ := h.svc.Admin.GetUserPurchasedBanks(id)
+
+	response.Success(c, gin.H{
+		"user":  user,
+		"banks": banks,
+	})
 }
 
 func (h *Handler) UpdateUserStatus(c *gin.Context) {

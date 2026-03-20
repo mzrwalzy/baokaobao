@@ -84,6 +84,15 @@ func (r *Repository) CreateUserBankAccess(access *model.UserBankAccess) error {
 	return r.db.Create(access).Error
 }
 
+func (r *Repository) GetUserPurchasedBanks(userID int64) ([]model.QuestionBank, error) {
+	var banks []model.QuestionBank
+	err := r.db.Table("question_banks").
+		Joins("INNER JOIN user_bank_access ON question_banks.id = user_bank_access.bank_id").
+		Where("user_bank_access.user_id = ?", userID).
+		Find(&banks).Error
+	return banks, err
+}
+
 func (r *Repository) GetTodayNewUsers() ([]model.User, error) {
 	var users []model.User
 	today := time.Now().Format("2006-01-02")
