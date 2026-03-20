@@ -121,20 +121,48 @@
       </div>
     </el-dialog>
     
-    <el-dialog v-model="importVisible" title="批量导入" width="500px">
-      <el-form>
-        <el-form-item label="题库">
-          <el-select v-model="importForm.bank_id" placeholder="请选择">
+    <el-dialog v-model="importVisible" title="批量导入" width="600px">
+      <div class="import-tips">
+        <el-alert type="info" :closable="false">
+          <template #title>
+            导入说明：
+            <ol style="margin: 8px 0 0 16px; padding-left: 0;">
+              <li>请先下载 Excel 模板，按格式填写题目信息</li>
+              <li>题库为必选项，请先选择要导入到的题库</li>
+              <li>支持 .xlsx 格式的 Excel 文件</li>
+            </ol>
+          </template>
+        </el-alert>
+        <el-button type="primary" link @click="handleDownloadTemplate" style="margin-top: 12px;">
+          📥 下载 Excel 模板
+        </el-button>
+      </div>
+      <el-form style="margin-top: 20px;">
+        <el-form-item label="题库" required>
+          <el-select v-model="importForm.bank_id" placeholder="请选择题库">
             <el-option v-for="bank in banks" :key="bank.id" :label="bank.name" :value="bank.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="JSON数据">
-          <el-input v-model="importForm.json_data" type="textarea" :rows="10" placeholder='[{"title":"题目1","content":"内容","answer":"A","type":"single"}]' />
+        <el-form-item label="上传文件" required>
+          <el-upload
+            ref="uploadRef"
+            :auto-upload="false"
+            :limit="1"
+            accept=".xlsx"
+            :on-change="handleFileChange"
+          >
+            <template #trigger>
+              <el-button>选择Excel文件</el-button>
+            </template>
+            <template #tip>
+              <div class="el-upload__tip">支持 .xlsx 格式</div>
+            </template>
+          </el-upload>
         </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="importVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleImportSubmit">导入</el-button>
+        <el-button type="primary" :loading="importLoading" @click="handleImportSubmit">导入</el-button>
       </template>
     </el-dialog>
   </div>
@@ -172,8 +200,10 @@ const form = reactive({
 
 const importForm = reactive({
   bank_id: null,
-  json_data: ''
+  file: null
 })
+
+const importLoading = ref(false)
 
 const typeMap = { single: '单选', multiple: '多选', truefalse: '判断' }
 
@@ -258,23 +288,42 @@ const handleDelete = async (row) => {
 
 const handleImport = () => {
   importForm.bank_id = null
-  importForm.json_data = ''
+  importForm.file = null
   importVisible.value = true
 }
 
+const handleFileChange = (file) => {
+  importForm.file = file.raw
+}
+
+const handleDownloadTemplate = () => {
+  window.open('/admin/api/v1/questions/template', '_blank')
+}
+
 const handleImportSubmit = async () => {
-  if (!importForm.bank_id || !importForm.json_data) {
-    ElMessage.warning('请填写完整')
+  if (!importForm.bank_id) {
+    ElMessage.warning('请选择题库')
     return
   }
+  if (!importForm.file) {
+    ElMessage.warning('请上传文件')
+    return
+  }
+
+  importLoading.value = true
   try {
-    const questions = JSON.parse(importForm.json_data)
-    await importQuestions({ bank_id: importForm.bank_id, questions })
+    const formData = new FormData()
+    formData.append('bank_id', importForm.bank_id)
+    formData.append('file', importForm.file)
+
+    await importQuestions(formData)
     ElMessage.success('导入成功')
     importVisible.value = false
     loadData()
   } catch (e) {
-    ElMessage.error('JSON格式错误或导入失败')
+    ElMessage.error(e.message || '导入失败')
+  } finally {
+    importLoading.value = false
   }
 }
 

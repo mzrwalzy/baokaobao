@@ -100,6 +100,7 @@ func SetupRouterWithDB(db *gorm.DB) *gin.Engine {
 			adminProtected.PUT("/questions/:id", h.UpdateQuestion)
 			adminProtected.DELETE("/questions/:id", h.DeleteQuestion)
 			adminProtected.POST("/questions/import", h.ImportQuestions)
+			adminProtected.GET("/questions/template", h.DownloadQuestionTemplate)
 
 			adminProtected.GET("/stats/overview", h.GetStatsOverview)
 			adminProtected.GET("/stats/users", h.GetUserStats)

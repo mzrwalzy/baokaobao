@@ -34,6 +34,9 @@ request.interceptors.response.use(
       userStore.logout()
       router.push('/login')
       ElMessage.error('登录已过期')
+    } else if (error.response?.data?.msg) {
+      ElMessage.error(error.response.data.msg)
+      return Promise.reject(new Error(error.response.data.msg))
     } else {
       ElMessage.error(error.message || '网络错误')
     }

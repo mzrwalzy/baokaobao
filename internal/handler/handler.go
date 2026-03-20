@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 	"go.uber.org/zap"
 )
 
@@ -458,56 +459,101 @@ func (h *Handler) DeleteQuestion(c *gin.Context) {
 }
 
 func (h *Handler) ImportQuestions(c *gin.Context) {
-	var req struct {
-		BankID    int64                    `json:"bank_id" binding:"required"`
-		Questions []map[string]interface{} `json:"questions" binding:"required"`
+	bankIDStr := c.PostForm("bank_id")
+	if bankIDStr == "" {
+		response.BadRequest(c, "请选择题库")
+		return
+	}
+	bankID := parseInt64(bankIDStr)
+	if bankID == 0 {
+		response.BadRequest(c, "无效的题库ID")
+		return
 	}
 
-	if err := c.ShouldBindJSON(&req); err != nil {
-		response.BadRequest(c, "参数错误")
+	file, _, err := c.Request.FormFile("file")
+	if err != nil {
+		response.BadRequest(c, "请上传文件")
+		return
+	}
+	defer file.Close()
+
+	f, err := excelize.OpenReader(file)
+	if err != nil {
+		response.BadRequest(c, "文件格式错误，请上传Excel文件(.xlsx)")
+		return
+	}
+	defer f.Close()
+
+	rows, err := f.GetRows("题目导入模板")
+	if err != nil {
+		rows, err = f.GetRows("Sheet1")
+		if err != nil {
+			response.BadRequest(c, "读取Excel失败")
+			return
+		}
+	}
+
+	if len(rows) < 2 {
+		response.BadRequest(c, "Excel中没有数据")
 		return
 	}
 
 	imported := 0
-	for _, q := range req.Questions {
-		question := &model.Question{
-			BankID: req.BankID,
+	skipFirst := true
+
+	for _, row := range rows {
+		if skipFirst || len(row) < 3 {
+			skipFirst = false
+			continue
 		}
 
-		if title, ok := q["title"].(string); ok {
-			question.Title = title
+		question := &model.Question{
+			BankID: bankID,
 		}
-		if content, ok := q["content"].(string); ok {
-			question.Content = content
+
+		if len(row) > 0 {
+			question.Title = row[0]
 		}
-		if answer, ok := q["answer"].(string); ok {
-			question.Answer = answer
+		if len(row) > 1 {
+			question.Content = row[1]
 		}
-		if analysis, ok := q["analysis"].(string); ok {
-			question.Analysis = analysis
+		if len(row) > 2 {
+			question.Answer = row[2]
 		}
-		if qType, ok := q["type"].(string); ok {
+		if len(row) > 3 {
+			question.Analysis = row[3]
+		}
+		if len(row) > 4 {
+			qType := row[4]
+			if qType == "" {
+				qType = "single"
+			}
 			question.Type = qType
 		} else {
 			question.Type = "single"
 		}
-		if difficulty, ok := q["difficulty"].(float64); ok {
-			question.Difficulty = int8(difficulty)
+		if len(row) > 5 {
+			diff := parseIntDefault(row[5], 3)
+			question.Difficulty = int8(diff)
+		} else {
+			question.Difficulty = 3
 		}
 
-		if options, ok := q["options"].([]interface{}); ok {
-			for _, opt := range options {
-				if optMap, ok := opt.(map[string]interface{}); ok {
-					option := model.QuestionOption{}
-					if key, ok := optMap["key"].(string); ok {
-						option.OptionKey = key
-					}
-					if value, ok := optMap["value"].(string); ok {
-						option.OptionValue = value
-					}
-					question.Options = append(question.Options, option)
-				}
-			}
+		if len(row) > 6 && row[6] != "" {
+			question.Options = append(question.Options, model.QuestionOption{OptionKey: "A", OptionValue: row[6]})
+		}
+		if len(row) > 7 && row[7] != "" {
+			question.Options = append(question.Options, model.QuestionOption{OptionKey: "B", OptionValue: row[7]})
+		}
+		if len(row) > 8 && row[8] != "" {
+			question.Options = append(question.Options, model.QuestionOption{OptionKey: "C", OptionValue: row[8]})
+		}
+		if len(row) > 9 && row[9] != "" {
+			question.Options = append(question.Options, model.QuestionOption{OptionKey: "D", OptionValue: row[9]})
+		}
+
+		if question.Title == "" {
+			continue
 		}
 
 		if err := h.svc.Question.CreateQuestion(question); err == nil {
@@ -516,6 +562,41 @@ func (h *Handler) ImportQuestions(c *gin.Context) {
 	}
 
 	response.Success(c, gin.H{"imported": imported})
+}
+
+func (h *Handler) DownloadQuestionTemplate(c *gin.Context) {
+	f := excelize.NewFile()
+	defer f.Close()
+
+	sheetName := "题目导入模板"
+	f.NewSheet(sheetName)
+	f.DeleteSheet("Sheet1")
+
+	headers := []string{"题目标题", "题目内容", "正确答案", "解析", "类型", "难度", "选项A", "选项B", "选项C", "选项D"}
+	for i, header := range headers {
+		cell, _ := excelize.CoordinatesToCellName(i+1, 1)
+		f.SetCellValue(sheetName, cell, header)
+	}
+
+	f.SetColWidth(sheetName, "A", "A", 30)
+	f.SetColWidth(sheetName, "B", "B", 40)
+	f.SetColWidth(sheetName, "C", "C", 15)
+	f.SetColWidth(sheetName, "D", "D", 30)
+	f.SetColWidth(sheetName, "E", "E", 15)
+	f.SetColWidth(sheetName, "F", "F", 10)
+	f.SetColWidth(sheetName, "G", "G", 30)
+	f.SetColWidth(sheetName, "H", "H", 30)
+	f.SetColWidth(sheetName, "I", "I", 30)
+	f.SetColWidth(sheetName, "J", "J", 30)
+
+	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.Header("Content-Disposition", "attachment; filename=question_template.xlsx")
+	c.Header("File-Name", "question_template.xlsx")
+
+	if err := f.Write(c.Writer); err != nil {
+		response.InternalError(c, "生成模板失败")
+		return
+	}
 }
 
 func (h *Handler) GetStatsOverview(c *gin.Context) {
