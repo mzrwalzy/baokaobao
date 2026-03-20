@@ -8,6 +8,7 @@ import (
 	"baokaobao/internal/config"
 	"baokaobao/internal/handler"
 	"baokaobao/internal/middleware"
+	"baokaobao/internal/migrations"
 	"baokaobao/internal/repository"
 	"baokaobao/internal/router"
 	"baokaobao/internal/service"
@@ -68,6 +69,10 @@ func run() error {
 	db, err := initDB()
 	if err != nil {
 		return fmt.Errorf("init db failed: %w", err)
+	}
+
+	if err := migrations.AutoMigrate(db); err != nil {
+		return fmt.Errorf("auto migrate failed: %w", err)
 	}
 
 	middleware.InitJWT()
