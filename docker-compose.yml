@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: baokaobao-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: baokaobao
+      MYSQL_USER: baokaobao
+      MYSQL_PASSWORD: baokaobao_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - baokaobao-net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: baokaobao-app
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      BAOKAOBAO_DATABASE_HOST: mysql
+      BAOKAOBAO_DATABASE_PORT: "3306"
+      BAOKAOBAO_DATABASE_USERNAME: baokaobao
+      BAOKAOBAO_DATABASE_PASSWORD: baokaobao_password
+      BAOKAOBAO_DATABASE_NAME: baokaobao
+      BAOKAOBAO_APP_MODE: "release"
+    ports:
+      - "8080:8080"
+    networks:
+      - baokaobao-net
+
+volumes:
+  mysql_data:
+
+networks:
+  baokaobao-net:
+    driver: bridge
