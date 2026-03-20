@@ -361,3 +361,7 @@ func (r *Repository) CountTodayUsers() (int64, error) {
 func (r *Repository) UpdateUserStatus(userID int64, status int8) error {
 	return r.db.Model(&model.User{}).Where("id = ?", userID).Update("status", status).Error
 }
+
+func (r *Repository) CreateAdmin(admin *model.AdminUser) error {
+	return r.db.Create(admin).Error
+}

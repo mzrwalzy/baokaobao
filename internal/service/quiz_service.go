@@ -108,6 +108,10 @@ func (s *QuizService) GetWrongQuestions(userID int64, page, pageSize int) ([]mod
 	return s.repo.ListWrongQuestions(userID, page, pageSize)
 }
 
+func (s *QuizService) AddToWrong(userID, questionID int64) error {
+	return s.repo.AddToWrongQuestions(userID, questionID)
+}
+
 func (s *QuizService) compareAnswer(correct, given, qType string) bool {
 	switch qType {
 	case "single", "truefalse", "judge":

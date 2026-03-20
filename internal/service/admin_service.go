@@ -3,6 +3,8 @@ package service
 import (
 	"baokaobao/internal/model"
 	"baokaobao/internal/repository"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AdminService struct {
@@ -37,4 +39,39 @@ func (s *AdminService) GetUser(id int64) (*model.User, error) {
 
 func (s *AdminService) UpdateUserStatus(id int64, status int8) error {
 	return s.repo.UpdateUserStatus(id, status)
+}
+
+func (s *AdminService) GetUserStats() (*model.UserStatsResponse, error) {
+	total, _ := s.repo.CountUsers()
+	today, _ := s.repo.CountTodayUsers()
+
+	return &model.UserStatsResponse{
+		Total: total,
+		Today: today,
+	}, nil
+}
+
+func (s *AdminService) GetQuestionStats() (*model.QuestionStatsResponse, error) {
+	total, _ := s.repo.CountQuestions()
+
+	return &model.QuestionStatsResponse{
+		Total: total,
+	}, nil
+}
+
+func (s *AdminService) CreateAdminUser(username, password, nickname string) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	admin := &model.AdminUser{
+		Username:     username,
+		PasswordHash: string(hash),
+		Nickname:     nickname,
+		Role:         "admin",
+		Status:       1,
+	}
+
+	return s.repo.CreateAdmin(admin)
 }

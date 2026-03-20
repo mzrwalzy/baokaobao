@@ -4,6 +4,10 @@ import (
 	"baokaobao/internal/model"
 	"baokaobao/internal/pkg/wechat"
 	"baokaobao/internal/service"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -90,7 +94,34 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 }
 
 func (h *Handler) UploadAvatar(c *gin.Context) {
-	model.Success(c, gin.H{"url": "https://example.com/avatar.jpg"})
+	file, header, err := c.Request.FormFile("file")
+	if err != nil {
+		model.BadRequest(c, "please upload a file")
+		return
+	}
+	defer file.Close()
+
+	if header.Size > 2*1024*1024 {
+		model.BadRequest(c, "file size must be less than 2MB")
+		return
+	}
+
+	userID := c.GetInt64("user_id")
+
+	ext := ".jpg"
+	if header.Header.Get("Content-Type") == "image/png" {
+		ext = ".png"
+	}
+
+	filename := fmt.Sprintf("avatar_%d%s", userID, ext)
+
+	url, err := h.svc.User.UploadAvatar(userID, file, filename)
+	if err != nil {
+		model.InternalError(c, err.Error())
+		return
+	}
+
+	model.Success(c, gin.H{"url": url})
 }
 
 func (h *Handler) ListQuestions(c *gin.Context) {
@@ -182,6 +213,19 @@ func (h *Handler) GetWrongQuestions(c *gin.Context) {
 }
 
 func (h *Handler) AddToWrongQuestions(c *gin.Context) {
+	userID := c.GetInt64("user_id")
+	questionID := parseInt64(c.Param("qid"))
+
+	if questionID == 0 {
+		model.BadRequest(c, "invalid question id")
+		return
+	}
+
+	if err := h.svc.Quiz.AddToWrong(userID, questionID); err != nil {
+		model.InternalError(c, err.Error())
+		return
+	}
+
 	model.Success(c, nil)
 }
 
@@ -410,7 +454,64 @@ func (h *Handler) DeleteQuestion(c *gin.Context) {
 }
 
 func (h *Handler) ImportQuestions(c *gin.Context) {
-	model.Success(c, gin.H{"imported": 0})
+	var req struct {
+		BankID    int64                    `json:"bank_id" binding:"required"`
+		Questions []map[string]interface{} `json:"questions" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		model.BadRequest(c, "参数错误")
+		return
+	}
+
+	imported := 0
+	for _, q := range req.Questions {
+		question := &model.Question{
+			BankID: req.BankID,
+		}
+
+		if title, ok := q["title"].(string); ok {
+			question.Title = title
+		}
+		if content, ok := q["content"].(string); ok {
+			question.Content = content
+		}
+		if answer, ok := q["answer"].(string); ok {
+			question.Answer = answer
+		}
+		if analysis, ok := q["analysis"].(string); ok {
+			question.Analysis = analysis
+		}
+		if qType, ok := q["type"].(string); ok {
+			question.Type = qType
+		} else {
+			question.Type = "single"
+		}
+		if difficulty, ok := q["difficulty"].(float64); ok {
+			question.Difficulty = int8(difficulty)
+		}
+
+		if options, ok := q["options"].([]interface{}); ok {
+			for _, opt := range options {
+				if optMap, ok := opt.(map[string]interface{}); ok {
+					option := model.QuestionOption{}
+					if key, ok := optMap["key"].(string); ok {
+						option.OptionKey = key
+					}
+					if value, ok := optMap["value"].(string); ok {
+						option.OptionValue = value
+					}
+					question.Options = append(question.Options, option)
+				}
+			}
+		}
+
+		if err := h.svc.Question.CreateQuestion(question); err == nil {
+			imported++
+		}
+	}
+
+	model.Success(c, gin.H{"imported": imported})
 }
 
 func (h *Handler) GetStatsOverview(c *gin.Context) {
@@ -423,11 +524,21 @@ func (h *Handler) GetStatsOverview(c *gin.Context) {
 }
 
 func (h *Handler) GetUserStats(c *gin.Context) {
-	model.Success(c, gin.H{"total": 0, "today": 0})
+	stats, err := h.svc.Admin.GetUserStats()
+	if err != nil {
+		model.InternalError(c, err.Error())
+		return
+	}
+	model.Success(c, stats)
 }
 
 func (h *Handler) GetQuestionStats(c *gin.Context) {
-	model.Success(c, gin.H{"total": 0})
+	stats, err := h.svc.Admin.GetQuestionStats()
+	if err != nil {
+		model.InternalError(c, err.Error())
+		return
+	}
+	model.Success(c, stats)
 }
 
 func parseInt64(s string) int64 {

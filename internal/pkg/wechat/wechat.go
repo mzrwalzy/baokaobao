@@ -1,14 +1,13 @@
 package wechat
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
-
-	"github.com/silenceper/wechat/v2"
-	"github.com/silenceper/wechat/v2/miniprogram/config"
 )
 
 type WechatSDK struct {
@@ -78,7 +77,6 @@ func (w *WechatSDK) Code2Session(code string) (*Code2SessionResponse, error) {
 }
 
 func (w *WechatSDK) GetPhoneNumber(code string) (*PhoneNumberResponse, error) {
-	// 先获取 access_token
 	accessToken, err := w.getAccessToken()
 	if err != nil {
 		return nil, err
@@ -89,33 +87,32 @@ func (w *WechatSDK) GetPhoneNumber(code string) (*PhoneNumberResponse, error) {
 		accessToken,
 	)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	body := map[string]string{"code": code}
 	jsonBody, _ := json.Marshal(body)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, nil)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(jsonBody))
 	if err != nil {
 		return nil, fmt.Errorf("create request failed: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Body = nil
 
-	// 直接用 http.Post
-	resp, err := http.Post(url, "application/json", nil)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
+	respBody, _ := io.ReadAll(resp.Body)
 	var result PhoneNumberResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := json.Unmarshal(respBody, &result); err != nil {
 		return nil, fmt.Errorf("decode response failed: %w", err)
 	}
 
 	if result.ErrCode != 0 {
-		return nil, fmt.Errorf("wechat error: %s", result.ErrMsg)
+		return nil, fmt.Errorf("wechat error: code=%d, msg=%s", result.ErrCode, result.ErrMsg)
 	}
 
 	return &result, nil
@@ -152,14 +149,4 @@ func (w *WechatSDK) getAccessToken() (string, error) {
 	}
 
 	return result.AccessToken, nil
-}
-
-// 初始化微信 SDK (使用 silenceper/wechat 库)
-func NewWechat(appID, secret string) *wechat.Wechat {
-	cfg := &config.Config{
-		AppID:     appID,
-		AppSecret: secret,
-	}
-	wc := wechat.New(cfg)
-	return wc
 }

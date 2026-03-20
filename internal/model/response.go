@@ -88,3 +88,12 @@ type DashboardStats struct {
 	TotalAnswers   int64 `json:"total_answers"`
 	TodayUsers     int64 `json:"today_users"`
 }
+
+type UserStatsResponse struct {
+	Total int64 `json:"total"`
+	Today int64 `json:"today"`
+}
+
+type QuestionStatsResponse struct {
+	Total int64 `json:"total"`
+}

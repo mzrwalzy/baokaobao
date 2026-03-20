@@ -7,16 +7,22 @@ import (
 
 	"baokaobao/internal/config"
 	"baokaobao/internal/migrations"
+	"baokaobao/internal/model"
 	"baokaobao/internal/router"
+	"baokaobao/internal/service"
 
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 var (
-	configPath = flag.String("config", "config/config.yaml", "config file path")
+	configPath      = flag.String("config", "config/config.yaml", "config file path")
+	createAdminUser = flag.String("create-admin", "", "create admin user: username")
+	createAdminPass = flag.String("create-admin-pass", "admin123", "admin password")
 )
 
 func main() {
@@ -71,6 +77,10 @@ func run() error {
 		return fmt.Errorf("auto migrate failed: %w", err)
 	}
 
+	if *createAdminUser != "" {
+		return createAdmin(db, *createAdminUser, *createAdminPass)
+	}
+
 	r := router.SetupRouterWithDB(db)
 
 	addr := fmt.Sprintf("%s:%d", config.GlobalConfig.App.Host, config.GlobalConfig.App.Port)
@@ -98,4 +108,26 @@ func initDB() (*gorm.DB, error) {
 	sqlDB.SetConnMaxLifetime(0)
 
 	return db, nil
+}
+
+func createAdmin(db *gorm.DB, username, password string) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("hash password failed: %w", err)
+	}
+
+	admin := &model.AdminUser{
+		Username:     username,
+		PasswordHash: string(hash),
+		Nickname:     username,
+		Role:         "admin",
+		Status:       1,
+	}
+
+	if err := db.Create(admin).Error; err != nil {
+		return fmt.Errorf("create admin failed: %w", err)
+	}
+
+	fmt.Printf("Admin user '%s' created successfully!\n", username)
+	return nil
 }
