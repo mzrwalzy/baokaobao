@@ -6,12 +6,8 @@ import (
 	"os"
 
 	"baokaobao/internal/config"
-	"baokaobao/internal/handler"
-	"baokaobao/internal/middleware"
 	"baokaobao/internal/migrations"
-	"baokaobao/internal/repository"
 	"baokaobao/internal/router"
-	"baokaobao/internal/service"
 
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
@@ -75,13 +71,7 @@ func run() error {
 		return fmt.Errorf("auto migrate failed: %w", err)
 	}
 
-	middleware.InitJWT()
-
-	repo := repository.NewRepository(db)
-	svc := service.NewService(repo)
-	h := handler.NewHandler(svc)
-
-	r := router.SetupRouter(h)
+	r := router.SetupRouterWithDB(db)
 
 	addr := fmt.Sprintf("%s:%d", config.GlobalConfig.App.Host, config.GlobalConfig.App.Port)
 	zap.S().Infof("Server starting on %s", addr)

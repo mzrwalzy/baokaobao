@@ -54,12 +54,14 @@ type ExamSubmitResponse struct {
 }
 
 type RankingResponse struct {
-	Rank        int64   `json:"rank"`
-	UserID      int64   `json:"user_id"`
-	Nickname    string  `json:"nickname"`
-	AvatarURL   string  `json:"avatar_url"`
-	TotalScore  int     `json:"total_score"`
-	CorrectRate float64 `json:"correct_rate"`
+	Rank          int64   `json:"rank"`
+	UserID        int64   `json:"user_id"`
+	Nickname      string  `json:"nickname"`
+	AvatarURL     string  `json:"avatar_url"`
+	TotalScore    int     `json:"total_score"`
+	CorrectCount  int     `json:"correct_count"`
+	TotalQuestion int     `json:"total_question"`
+	CorrectRate   float64 `json:"correct_rate"`
 }
 
 type StatsResponse struct {

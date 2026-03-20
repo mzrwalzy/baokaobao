@@ -1,26 +1,28 @@
 package router
 
 import (
+	"baokaobao/internal/config"
 	"baokaobao/internal/handler"
 	"baokaobao/internal/middleware"
+	"baokaobao/internal/pkg/jwt"
+	"baokaobao/internal/pkg/wechat"
+	"baokaobao/internal/repository"
+	"baokaobao/internal/service"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
-type HandlerGroup struct {
-	Auth     *handler.AuthHandler
-	User     *handler.UserHandler
-	Question *handler.QuestionHandler
-	Quiz     *handler.QuizHandler
-	Score    *handler.ScoreHandler
-	Admin    *handler.AdminHandler
-}
+func SetupRouterWithDB(db *gorm.DB) *gin.Engine {
+	middleware.InitJWT()
 
-func SetupRouter(group *HandlerGroup) *gin.Engine {
-	if middleware.GetJWT() == nil {
-		middleware.InitJWT()
-	}
+	repo := repository.NewRepository(db)
+	jwtSDK := jwt.NewJWT(config.GlobalConfig.JWT.Secret, config.GlobalConfig.JWT.ExpireHours)
+	wechatSDK := wechat.NewWechatSDK(config.GlobalConfig.Wechat.AppID, config.GlobalConfig.Wechat.Secret)
+
+	svc := service.NewService(repo, jwtSDK, wechatSDK)
+	h := handler.NewHandler(svc, wechatSDK)
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
@@ -36,72 +38,72 @@ func SetupRouter(group *HandlerGroup) *gin.Engine {
 	{
 		auth := api.Group("/auth")
 		{
-			auth.POST("/login_by_wechat", group.Auth.LoginByWechat)
-			auth.POST("/decrypt_phone", middleware.MiniProgramAuth(), group.Auth.DecryptPhone)
-			auth.POST("/logout", middleware.MiniProgramAuth(), group.Auth.Logout)
+			auth.POST("/login_by_wechat", h.LoginByWechat)
+			auth.POST("/decrypt_phone", middleware.MiniProgramAuth(), h.DecryptPhone)
+			auth.POST("/logout", middleware.MiniProgramAuth(), h.Logout)
 		}
 
 		user := api.Group("/user")
 		user.Use(middleware.MiniProgramAuth())
 		{
-			user.GET("/profile", group.User.GetProfile)
-			user.PUT("/profile", group.User.UpdateProfile)
-			user.POST("/avatar", group.User.UploadAvatar)
+			user.GET("/profile", h.GetProfile)
+			user.PUT("/profile", h.UpdateProfile)
+			user.POST("/avatar", h.UploadAvatar)
 		}
 
 		question := api.Group("/questions")
 		question.Use(middleware.MiniProgramAuth())
 		{
-			question.GET("", group.Question.List)
-			question.GET("/:id", group.Question.Get)
-			question.GET("/random", group.Question.Random)
+			question.GET("", h.ListQuestions)
+			question.GET("/:id", h.GetQuestion)
+			question.GET("/random", h.RandomQuestions)
 		}
 
 		quiz := api.Group("/quiz")
 		quiz.Use(middleware.MiniProgramAuth())
 		{
-			quiz.POST("/submit", group.Quiz.Submit)
-			quiz.GET("/history", group.Quiz.History)
-			quiz.GET("/wrong_questions", group.Quiz.WrongQuestions)
-			quiz.POST("/add_wrong/:qid", group.Quiz.AddWrong)
+			quiz.POST("/submit", h.SubmitAnswer)
+			quiz.GET("/history", h.GetQuizHistory)
+			quiz.GET("/wrong_questions", h.GetWrongQuestions)
+			quiz.POST("/add_wrong/:qid", h.AddToWrongQuestions)
 		}
 
 		score := api.Group("/score")
 		score.Use(middleware.MiniProgramAuth())
 		{
-			score.GET("/my", group.Score.MyScore)
-			score.GET("/ranking", group.Score.Ranking)
-			score.GET("/stats", group.Score.Stats)
+			score.GET("/my", h.GetMyScore)
+			score.GET("/ranking", h.GetRanking)
+			score.GET("/stats", h.GetStats)
 		}
 	}
 
 	admin := r.Group("/admin/api/v1")
 	{
-		admin.POST("/login", group.Admin.Login)
-		admin.POST("/logout", middleware.AdminAuth(), group.Admin.Logout)
+		admin.POST("/login", h.AdminLogin)
+		admin.POST("/logout", middleware.AdminAuth(), h.AdminLogout)
 
 		adminProtected := admin.Group("")
 		adminProtected.Use(middleware.AdminAuth())
 		{
-			adminProtected.GET("/dashboard", group.Admin.Dashboard)
-			adminProtected.GET("/users", group.Admin.ListUsers)
-			adminProtected.GET("/users/:id", group.Admin.GetUser)
-			adminProtected.PUT("/users/:id/status", group.Admin.UpdateUserStatus)
+			adminProtected.GET("/dashboard", h.GetDashboard)
+			adminProtected.GET("/users", h.ListAllUsers)
+			adminProtected.GET("/users/:id", h.GetUserDetail)
+			adminProtected.PUT("/users/:id/status", h.UpdateUserStatus)
 
-			adminProtected.GET("/question_banks", group.Admin.ListQuestionBanks)
-			adminProtected.POST("/question_banks", group.Admin.CreateQuestionBank)
-			adminProtected.PUT("/question_banks/:id", group.Admin.UpdateQuestionBank)
-			adminProtected.DELETE("/question_banks/:id", group.Admin.DeleteQuestionBank)
+			adminProtected.GET("/question_banks", h.ListQuestionBanks)
+			adminProtected.POST("/question_banks", h.CreateQuestionBank)
+			adminProtected.PUT("/question_banks/:id", h.UpdateQuestionBank)
+			adminProtected.DELETE("/question_banks/:id", h.DeleteQuestionBank)
 
-			adminProtected.GET("/questions", group.Admin.ListQuestions)
-			adminProtected.POST("/questions", group.Admin.CreateQuestion)
-			adminProtected.PUT("/questions/:id", group.Admin.UpdateQuestion)
-			adminProtected.DELETE("/questions/:id", group.Admin.DeleteQuestion)
-			adminProtected.POST("/questions/import", group.Admin.ImportQuestions)
+			adminProtected.GET("/questions", h.ListAllQuestions)
+			adminProtected.POST("/questions", h.CreateQuestion)
+			adminProtected.PUT("/questions/:id", h.UpdateQuestion)
+			adminProtected.DELETE("/questions/:id", h.DeleteQuestion)
+			adminProtected.POST("/questions/import", h.ImportQuestions)
 
-			adminProtected.GET("/stats/overview", group.Admin.StatsOverview)
-			adminProtected.GET("/stats/users", group.Admin.StatsUsers)
-			adminProtected.GET("/stats/questions", group.Admin.StatsQuestions)
+			adminProtected.GET("/stats/overview", h.GetStatsOverview)
+			adminProtected.GET("/stats/users", h.GetUserStats)
+			adminProtected.GET("/stats/questions", h.GetQuestionStats)
 		}
 	}
 
