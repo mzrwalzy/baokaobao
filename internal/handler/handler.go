@@ -128,10 +128,11 @@ func (h *Handler) ListQuestions(c *gin.Context) {
 	if b := c.Query("bank_id"); b != "" {
 		bankID = parseInt64(b)
 	}
+	questionType := c.Query("type")
 	page := parseIntDefault(c.Query("page"), 1)
 	pageSize := parseIntDefault(c.Query("page_size"), 20)
 
-	questions, total, err := h.svc.Question.ListQuestions(bankID, page, pageSize)
+	questions, total, err := h.svc.Question.ListQuestions(bankID, questionType, page, pageSize)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return
@@ -397,10 +398,11 @@ func (h *Handler) ListAllQuestions(c *gin.Context) {
 	if b := c.Query("bank_id"); b != "" {
 		bankID = parseInt64(b)
 	}
+	questionType := c.Query("type")
 	page := parseIntDefault(c.Query("page"), 1)
 	pageSize := parseIntDefault(c.Query("page_size"), 20)
 
-	questions, total, err := h.svc.Question.ListQuestions(bankID, page, pageSize)
+	questions, total, err := h.svc.Question.ListQuestions(bankID, questionType, page, pageSize)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return
@@ -512,19 +514,16 @@ func (h *Handler) ImportQuestions(c *gin.Context) {
 		}
 
 		if len(row) > 0 {
-			question.Title = row[0]
+			question.Content = row[0]
 		}
 		if len(row) > 1 {
-			question.Content = row[1]
+			question.Answer = row[1]
 		}
 		if len(row) > 2 {
-			question.Answer = row[2]
+			question.Analysis = row[2]
 		}
 		if len(row) > 3 {
-			question.Analysis = row[3]
-		}
-		if len(row) > 4 {
-			qType := row[4]
+			qType := row[3]
 			if qType == "" {
 				qType = "single"
 			}
@@ -532,27 +531,27 @@ func (h *Handler) ImportQuestions(c *gin.Context) {
 		} else {
 			question.Type = "single"
 		}
-		if len(row) > 5 {
-			diff := parseIntDefault(row[5], 3)
+		if len(row) > 4 {
+			diff := parseIntDefault(row[4], 3)
 			question.Difficulty = int8(diff)
 		} else {
 			question.Difficulty = 3
 		}
 
+		if len(row) > 5 && row[5] != "" {
+			question.Options = append(question.Options, model.QuestionOption{OptionKey: "A", OptionValue: row[5]})
+		}
 		if len(row) > 6 && row[6] != "" {
-			question.Options = append(question.Options, model.QuestionOption{OptionKey: "A", OptionValue: row[6]})
+			question.Options = append(question.Options, model.QuestionOption{OptionKey: "B", OptionValue: row[6]})
 		}
 		if len(row) > 7 && row[7] != "" {
-			question.Options = append(question.Options, model.QuestionOption{OptionKey: "B", OptionValue: row[7]})
+			question.Options = append(question.Options, model.QuestionOption{OptionKey: "C", OptionValue: row[7]})
 		}
 		if len(row) > 8 && row[8] != "" {
-			question.Options = append(question.Options, model.QuestionOption{OptionKey: "C", OptionValue: row[8]})
-		}
-		if len(row) > 9 && row[9] != "" {
-			question.Options = append(question.Options, model.QuestionOption{OptionKey: "D", OptionValue: row[9]})
+			question.Options = append(question.Options, model.QuestionOption{OptionKey: "D", OptionValue: row[8]})
 		}
 
-		if question.Title == "" {
+		if question.Content == "" {
 			continue
 		}
 
@@ -572,22 +571,34 @@ func (h *Handler) DownloadQuestionTemplate(c *gin.Context) {
 	f.NewSheet(sheetName)
 	f.DeleteSheet("Sheet1")
 
-	headers := []string{"题目标题", "题目内容", "正确答案", "解析", "类型", "难度", "选项A", "选项B", "选项C", "选项D"}
+	headers := []string{"题目内容", "正确答案", "解析", "类型", "难度", "选项A", "选项B", "选项C", "选项D"}
 	for i, header := range headers {
 		cell, _ := excelize.CoordinatesToCellName(i+1, 1)
 		f.SetCellValue(sheetName, cell, header)
 	}
 
-	f.SetColWidth(sheetName, "A", "A", 30)
-	f.SetColWidth(sheetName, "B", "B", 40)
-	f.SetColWidth(sheetName, "C", "C", 15)
-	f.SetColWidth(sheetName, "D", "D", 30)
-	f.SetColWidth(sheetName, "E", "E", 15)
-	f.SetColWidth(sheetName, "F", "F", 10)
+	f.SetColWidth(sheetName, "A", "A", 50)
+	f.SetColWidth(sheetName, "B", "B", 15)
+	f.SetColWidth(sheetName, "C", "C", 30)
+	f.SetColWidth(sheetName, "D", "D", 15)
+	f.SetColWidth(sheetName, "E", "E", 10)
+	f.SetColWidth(sheetName, "F", "F", 30)
 	f.SetColWidth(sheetName, "G", "G", 30)
 	f.SetColWidth(sheetName, "H", "H", 30)
 	f.SetColWidth(sheetName, "I", "I", 30)
-	f.SetColWidth(sheetName, "J", "J", 30)
+
+	examples := [][]interface{}{
+		{"以下哪个是华为的操作系统？", "A", "鸿蒙系统是华为自主研发的操作系统", "single", 2, "鸿蒙", "iOS", "Android", ""},
+		{"以下哪些是编程语言？", "AB", "Java和Python都是高级编程语言", "multiple", 3, "Java", "Python", "Windows", "Excel"},
+		{"Java是一种编程语言。", "true", "判断题直接填true或false", "truefalse", 1, "", "", "", ""},
+	}
+
+	for rowIdx, row := range examples {
+		for colIdx, val := range row {
+			cell, _ := excelize.CoordinatesToCellName(colIdx+1, rowIdx+2)
+			f.SetCellValue(sheetName, cell, val)
+		}
+	}
 
 	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	c.Header("Content-Disposition", "attachment; filename=question_template.xlsx")

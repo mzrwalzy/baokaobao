@@ -145,13 +145,16 @@ func (r *Repository) DeleteQuestionBank(id int64) error {
 	return r.db.Delete(&model.QuestionBank{}, id).Error
 }
 
-func (r *Repository) ListQuestions(bankID int64, page, pageSize int) ([]model.Question, int64, error) {
+func (r *Repository) ListQuestions(bankID int64, questionType string, page, pageSize int) ([]model.Question, int64, error) {
 	var questions []model.Question
 	var total int64
 
 	query := r.db.Model(&model.Question{})
 	if bankID > 0 {
 		query = query.Where("bank_id = ?", bankID)
+	}
+	if questionType != "" {
+		query = query.Where("type = ?", questionType)
 	}
 
 	query.Count(&total)

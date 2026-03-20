@@ -11,12 +11,12 @@
     <div class="filters card">
       <el-form inline :model="filters">
         <el-form-item label="题库">
-          <el-select v-model="filters.bank_id" placeholder="请选择" clearable>
+          <el-select v-model="filters.bank_id" placeholder="请选择" clearable style="width: 200px">
             <el-option v-for="bank in banks" :key="bank.id" :label="bank.name" :value="bank.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="类型">
-          <el-select v-model="filters.type" placeholder="请选择" clearable>
+          <el-select v-model="filters.type" placeholder="请选择" clearable style="width: 150px">
             <el-option label="单选题" value="single" />
             <el-option label="多选题" value="multiple" />
             <el-option label="判断题" value="truefalse" />

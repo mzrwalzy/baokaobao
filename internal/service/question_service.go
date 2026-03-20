@@ -37,8 +37,8 @@ func (s *QuestionService) DeleteQuestionBank(id int64) error {
 	return s.repo.DeleteQuestionBank(id)
 }
 
-func (s *QuestionService) ListQuestions(bankID int64, page, pageSize int) ([]model.Question, int64, error) {
-	return s.repo.ListQuestions(bankID, page, pageSize)
+func (s *QuestionService) ListQuestions(bankID int64, questionType string, page, pageSize int) ([]model.Question, int64, error) {
+	return s.repo.ListQuestions(bankID, questionType, page, pageSize)
 }
 
 func (s *QuestionService) GetQuestion(id int64) (*model.Question, error) {
