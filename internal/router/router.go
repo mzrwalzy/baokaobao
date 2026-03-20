@@ -81,6 +81,7 @@ func SetupRouterWithDB(db *gorm.DB) *gin.Engine {
 	{
 		admin.POST("/login", h.AdminLogin)
 		admin.POST("/logout", middleware.AdminAuth(), h.AdminLogout)
+		admin.GET("/question_template", h.DownloadQuestionTemplate) // Public - no auth needed
 
 		adminProtected := admin.Group("")
 		adminProtected.Use(middleware.AdminAuth())
@@ -100,7 +101,6 @@ func SetupRouterWithDB(db *gorm.DB) *gin.Engine {
 			adminProtected.PUT("/questions/:id", h.UpdateQuestion)
 			adminProtected.DELETE("/questions/:id", h.DeleteQuestion)
 			adminProtected.POST("/questions/import", h.ImportQuestions)
-			adminProtected.GET("/questions/template", h.DownloadQuestionTemplate)
 
 			adminProtected.GET("/stats/overview", h.GetStatsOverview)
 			adminProtected.GET("/stats/users", h.GetUserStats)

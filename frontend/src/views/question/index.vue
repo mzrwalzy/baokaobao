@@ -297,7 +297,7 @@ const handleFileChange = (file) => {
 }
 
 const handleDownloadTemplate = () => {
-  window.open('/admin/api/v1/questions/template', '_blank')
+  window.open('/admin/api/v1/question_template', '_blank')
 }
 
 const handleImportSubmit = async () => {
