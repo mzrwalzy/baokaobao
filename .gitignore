@@ -48,3 +48,10 @@ Thumbs.db
 
 # Uploads
 uploads/
+
+# Go dependencies
+go.sum
+
+# Admin frontend
+admin/node_modules/
+admin/dist/
