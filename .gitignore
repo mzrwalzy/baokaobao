@@ -33,6 +33,7 @@ logs/
 # Config (private)
 config/config.yaml
 config/*.yaml
+!config/config.yaml.example
 
 # Environment
 .env
