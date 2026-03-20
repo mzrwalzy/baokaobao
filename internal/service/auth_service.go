@@ -4,25 +4,25 @@ import (
 	"errors"
 	"time"
 
-	"baokaobao/internal/config"
 	"baokaobao/internal/model"
 	"baokaobao/internal/pkg/jwt"
 	"baokaobao/internal/pkg/wechat"
+	"baokaobao/internal/repository"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 type AuthService struct {
-	repo      *Repository
-	jwt       *jwt.JWT
+	repo      *repository.Repository
+	jwtSDK    *jwt.JWT
 	wechatSDK *wechat.WechatSDK
 }
 
-func NewAuthService(repo *Repository, jwt *jwt.JWT, wechatSDK *wechatSDK) *AuthService {
+func NewAuthService(repo *repository.Repository, jwtSDK *jwt.JWT, wechatSDK *wechat.WechatSDK) *AuthService {
 	return &AuthService{
 		repo:      repo,
-		jwt:       jwt,
+		jwtSDK:    jwtSDK,
 		wechatSDK: wechatSDK,
 	}
 }
@@ -36,15 +36,9 @@ type LoginResponse struct {
 	User  model.UserResponse `json:"user"`
 }
 
-type AdminLoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
+type AdminLoginRequest = model.AdminLoginRequest
 
-type AdminLoginResponse struct {
-	Token string              `json:"token"`
-	User  model.AdminResponse `json:"user"`
-}
+type AdminLoginResponse = model.AdminLoginResponse
 
 func (s *AuthService) LoginByWechat(code string) (*LoginResponse, error) {
 	result, err := s.wechatSDK.Code2Session(code)
@@ -75,7 +69,7 @@ func (s *AuthService) LoginByWechat(code string) (*LoginResponse, error) {
 	user.LastLogin = time.Now()
 	s.repo.UpdateUser(user)
 
-	token, err := s.jwt.GenerateToken(user.ID, user.OpenID, "mini")
+	token, err := s.jwtSDK.GenerateToken(user.ID, user.OpenID, "mini")
 	if err != nil {
 		return nil, errors.New("生成token失败")
 	}
@@ -112,7 +106,7 @@ func (s *AuthService) AdminLogin(req *AdminLoginRequest) (*AdminLoginResponse, e
 	admin.LastLogin = time.Now()
 	s.repo.UpdateAdmin(admin)
 
-	token, err := s.jwt.GenerateToken(admin.ID, admin.Username, "admin")
+	token, err := s.jwtSDK.GenerateToken(admin.ID, admin.Username, "admin")
 	if err != nil {
 		return nil, errors.New("生成token失败")
 	}
@@ -142,6 +136,6 @@ func (s *AuthService) DecryptPhone(userID int64, code string) (string, error) {
 	return phone, nil
 }
 
-func (s *AuthService) GetWechatSDK() *wechatSDK {
+func (s *AuthService) GetWechatSDK() *wechat.WechatSDK {
 	return s.wechatSDK
 }

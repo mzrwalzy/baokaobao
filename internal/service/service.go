@@ -16,7 +16,7 @@ type Service struct {
 	Admin    *AdminService
 }
 
-func NewService(repo *Repository, jwtSDK *jwt.JWT, wechatSDK *wechat.WechatSDK) *Service {
+func NewService(repo *repository.Repository, jwtSDK *jwt.JWT, wechatSDK *wechat.WechatSDK) *Service {
 	return &Service{
 		Auth:     NewAuthService(repo, jwtSDK, wechatSDK),
 		User:     NewUserService(repo),
@@ -28,5 +28,5 @@ func NewService(repo *Repository, jwtSDK *jwt.JWT, wechatSDK *wechat.WechatSDK) 
 }
 
 func (s *Service) ListUsers(page, pageSize int) ([]model.User, int64, error) {
-	return s.Question.ListUsers(page, pageSize)
+	return s.User.ListUsers(page, pageSize)
 }

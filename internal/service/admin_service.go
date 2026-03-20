@@ -8,10 +8,10 @@ import (
 )
 
 type AdminService struct {
-	repo *Repository
+	repo *repository.Repository
 }
 
-func NewAdminService(repo *Repository) *AdminService {
+func NewAdminService(repo *repository.Repository) *AdminService {
 	return &AdminService{repo: repo}
 }
 

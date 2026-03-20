@@ -5,13 +5,15 @@ import (
 
 	"baokaobao/internal/model"
 	"baokaobao/internal/repository"
+
+	"gorm.io/gorm"
 )
 
 type QuestionService struct {
-	repo *Repository
+	repo *repository.Repository
 }
 
-func NewQuestionService(repo *Repository) *QuestionService {
+func NewQuestionService(repo *repository.Repository) *QuestionService {
 	return &QuestionService{repo: repo}
 }
 

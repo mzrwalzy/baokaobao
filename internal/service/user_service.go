@@ -8,16 +8,15 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 
 	"gorm.io/gorm"
 )
 
 type UserService struct {
-	repo *Repository
+	repo *repository.Repository
 }
 
-func NewUserService(repo *Repository) *UserService {
+func NewUserService(repo *repository.Repository) *UserService {
 	return &UserService{repo: repo}
 }
 

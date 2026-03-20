@@ -9,9 +9,7 @@ import (
 	"baokaobao/internal/migrations"
 	"baokaobao/internal/model"
 	"baokaobao/internal/router"
-	"baokaobao/internal/service"
 
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
@@ -39,29 +37,7 @@ func run() error {
 		return fmt.Errorf("init config failed: %w", err)
 	}
 
-	zapConfig := zap.Config{
-		Level:       zap.NewAtomicLevel(),
-		Development: false,
-		Encoding:    "json",
-		EncoderConfig: zap.EncoderConfig{
-			TimeKey:        "time",
-			LevelKey:       "level",
-			NameKey:        "logger",
-			CallerKey:      "caller",
-			FunctionKey:    zap.OmitKey,
-			MessageKey:     "msg",
-			StacktraceKey:  "stacktrace",
-			LineEnding:     zap.DefaultLineEnding,
-			EncodeLevel:    zap.LowercaseLevelEncoder,
-			EncodeTime:     zap.ISO8601TimeEncoder,
-			EncodeDuration: zap.SecondsDurationEncoder,
-			EncodeCaller:   zap.ShortCallerEncoder,
-		},
-		OutputPaths:      []string{"stdout"},
-		ErrorOutputPaths: []string{"stderr"},
-	}
-
-	logger, err := zapConfig.Build()
+	logger, err := zap.NewProduction()
 	if err != nil {
 		return fmt.Errorf("init logger failed: %w", err)
 	}

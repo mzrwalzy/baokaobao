@@ -6,10 +6,10 @@ import (
 )
 
 type ScoreService struct {
-	repo *Repository
+	repo *repository.Repository
 }
 
-func NewScoreService(repo *Repository) *ScoreService {
+func NewScoreService(repo *repository.Repository) *ScoreService {
 	return &ScoreService{repo: repo}
 }
 
@@ -40,6 +40,6 @@ func (s *ScoreService) GetStats(userID int64) (*model.StatsResponse, error) {
 		TotalQuestions: score.TotalQuestion,
 		CorrectCount:   score.CorrectCount,
 		CorrectRate:    correctRate,
-		TotalExams:     totalExams,
+		TotalExams:     int(totalExams),
 	}, nil
 }

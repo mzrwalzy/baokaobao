@@ -6,10 +6,10 @@ import (
 )
 
 type QuizService struct {
-	repo *Repository
+	repo *repository.Repository
 }
 
-func NewQuizService(repo *Repository) *QuizService {
+func NewQuizService(repo *repository.Repository) *QuizService {
 	return &QuizService{repo: repo}
 }
 
