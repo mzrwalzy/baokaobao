@@ -1,0 +1,166 @@
+.ranking-page {
+  min-height: 100vh;
+  background: #F5F5F5;
+}
+
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 30rpx;
+  padding-top: calc(30rpx + env(safe-area-inset-top));
+  text-align: center;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.tab-bar {
+  display: flex;
+  background: #fff;
+  padding: 0 100rpx;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 30rpx 0;
+  font-size: 30rpx;
+  color: #666;
+  position: relative;
+}
+
+.tab-item.active {
+  color: #667eea;
+  font-weight: bold;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 6rpx;
+  background: #667eea;
+  border-radius: 3rpx;
+}
+
+.content {
+  height: calc(100vh - 250rpx);
+}
+
+.top-three {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 60rpx 30rpx 30rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.rank-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20rpx;
+}
+
+.rank-item.first {
+  order: 2;
+}
+
+.rank-item.second {
+  order: 1;
+  padding-bottom: 30rpx;
+}
+
+.rank-item.third {
+  order: 3;
+  padding-bottom: 10rpx;
+}
+
+.avatar {
+  font-size: 60rpx;
+  margin-bottom: 10rpx;
+}
+
+.first .avatar {
+  font-size: 80rpx;
+}
+
+.nickname {
+  font-size: 28rpx;
+  color: #fff;
+  margin-bottom: 8rpx;
+  max-width: 150rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+.rank-list {
+  padding: 20rpx 30rpx;
+}
+
+.rank-item-normal {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.rank-num {
+  width: 60rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #999;
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.user-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.user-name {
+  font-size: 30rpx;
+  color: #333;
+}
+
+.user-score {
+  font-size: 28rpx;
+  color: #667eea;
+  font-weight: 500;
+}
+
+.loading-tip {
+  text-align: center;
+  padding: 30rpx;
+  color: #999;
+}

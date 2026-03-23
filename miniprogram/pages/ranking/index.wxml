@@ -1,0 +1,56 @@
+<view class="ranking-page">
+  <view class="header">
+    <text class="header-title">排行榜</text>
+  </view>
+
+  <view class="tab-bar">
+    <view 
+      class="tab-item {{tab === 'monthly' ? 'active' : ''}}"
+      bindtap="switchTab" data-tab="monthly"
+    >月榜</view>
+    <view 
+      class="tab-item {{tab === 'total' ? 'active' : ''}}"
+      bindtap="switchTab" data-tab="total"
+    >总榜</view>
+  </view>
+
+  <scroll-view scroll-y class="content">
+    <view class="top-three">
+      <view class="rank-item second" wx:if="{{list[1]}}">
+        <view class="avatar">🥈</view>
+        <view class="nickname">{{list[1].nickname}}</view>
+        <view class="score">{{list[1].score}}分</view>
+      </view>
+      <view class="rank-item first" wx:if="{{list[0]}}">
+        <view class="avatar">🥇</view>
+        <view class="nickname">{{list[0].nickname}}</view>
+        <view class="score">{{list[0].score}}分</view>
+      </view>
+      <view class="rank-item third" wx:if="{{list[2]}}">
+        <view class="avatar">🥉</view>
+        <view class="nickname">{{list[2].nickname}}</view>
+        <view class="score">{{list[2].score}}分</view>
+      </view>
+    </view>
+
+    <view class="rank-list">
+      <view 
+        wx:for="{{list}}" 
+        wx:key="index"
+        wx:if="{{index >= 3}}"
+        class="rank-item-normal"
+      >
+        <view class="rank-num">{{index + 1}}</view>
+        <view class="user-info">
+          <view class="user-avatar">{{item.nickname ? item.nickname.charAt(0) : '?'}}</view>
+          <view class="user-name">{{item.nickname}}</view>
+        </view>
+        <view class="user-score">{{item.score}}分</view>
+      </view>
+    </view>
+
+    <view class="loading-tip" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+  </scroll-view>
+</view>

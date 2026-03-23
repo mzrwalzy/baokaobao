@@ -1,0 +1,58 @@
+<view class="bank-detail-page">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">←</view>
+    <text class="header-title">{{bankName}}</text>
+    <view class="share-btn">分享</view>
+  </view>
+
+  <view class="content">
+    <view class="bank-header">
+      <view class="bank-icon">📚</view>
+      <view class="bank-title">{{bankName}}</view>
+      <view class="bank-meta">
+        <text>题目数量: {{bankInfo.question_count || 0}}+</text>
+        <text>难度: {{bankInfo.difficulty >= 1 ? '⭐' : ''}}{{bankInfo.difficulty >= 2 ? '⭐' : ''}}{{bankInfo.difficulty >= 3 ? '⭐' : ''}}{{bankInfo.difficulty >= 4 ? '⭐' : ''}}{{bankInfo.difficulty >= 5 ? '⭐' : ''}}</text>
+      </view>
+    </view>
+
+    <view class="card description-card">
+      <view class="card-title">📖 题目简介</view>
+      <text class="description">{{bankInfo.description || '暂无简介'}}</text>
+    </view>
+
+    <view class="card mode-section">
+      <view class="card-title">🎯 刷题模式</view>
+      <view class="mode-grid">
+        <view 
+          class="mode-item {{mode === 'practice' ? 'active' : ''}}"
+          bindtap="selectMode" data-mode="practice"
+        >
+          <text class="mode-icon">📝</text>
+          <text class="mode-name">练习模式</text>
+        </view>
+        <view 
+          class="mode-item {{mode === 'exam' ? 'active' : ''}}"
+          bindtap="selectMode" data-mode="exam"
+        >
+          <text class="mode-icon">📋</text>
+          <text class="mode-name">考试模式</text>
+        </view>
+        <view 
+          class="mode-item {{mode === 'memorize' ? 'active' : ''}}"
+          bindtap="selectMode" data-mode="memorize"
+        >
+          <text class="mode-icon">🧠</text>
+          <text class="mode-name">背题模式</text>
+        </view>
+        <view class="mode-item" bindtap="goWrongQuestions">
+          <text class="mode-icon">❌</text>
+          <text class="mode-name">错题重做</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="start-section">
+      <button class="btn-start" bindtap="startQuiz">开始刷题</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,53 @@
+<view class="quiz-page">
+  <view class="header">
+    <view class="back-btn" bindtap="handleBack">←</view>
+    <view class="progress-info">{{currentIndex + 1}}/{{totalQuestions}}</view>
+    <view class="submit-btn" bindtap="handleSubmit">交卷</view>
+  </view>
+
+  <view class="progress-bar">
+    <view class="progress-fill" style="width: {{progress}}%"></view>
+  </view>
+
+  <scroll-view scroll-y class="content">
+    <view class="question-card">
+      <view class="question-type">{{typeText}}</view>
+      <view class="question-content">{{currentQuestion.content}}</view>
+    </view>
+
+    <view class="options-list">
+      <view 
+        wx:for="{{currentQuestion.options}}" 
+        wx:key="id"
+        class="option-item {{selectedAnswer === item.option_key ? 'selected' : ''}} {{showResult && item.option_key === currentQuestion.answer ? 'correct' : ''}} {{showResult && selectedAnswer === item.option_key && item.option_key !== currentQuestion.answer ? 'wrong' : ''}}"
+        bindtap="selectOption"
+        data-key="{{item.option_key}}"
+      >
+        <view class="option-key">{{item.option_key}}</view>
+        <view class="option-value">{{item.option_value}}</view>
+      </view>
+    </view>
+
+    <view class="analysis-card" wx:if="{{showResult && currentQuestion.analysis}}">
+      <view class="analysis-title">📝 答案解析</view>
+      <view class="analysis-content">{{currentQuestion.analysis}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="footer">
+    <button 
+      class="btn-nav {{currentIndex === 0 ? 'disabled' : ''}}" 
+      bindtap="prevQuestion"
+    >上一题</button>
+    <button 
+      wx:if="{{currentIndex < totalQuestions - 1}}"
+      class="btn-nav primary" 
+      bindtap="nextQuestion"
+    >下一题</button>
+    <button 
+      wx:else
+      class="btn-nav primary" 
+      bindtap="handleSubmit"
+    >交卷</button>
+  </view>
+</view>

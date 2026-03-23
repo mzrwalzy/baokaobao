@@ -1,0 +1,45 @@
+<view class="result-page">
+  <view class="header-bg">
+    <view class="celebration">🎉</view>
+    <view class="title">答题完成！</view>
+  </view>
+
+  <view class="score-card">
+    <view class="score-grid">
+      <view class="score-item">
+        <view class="score-value">{{accuracy}}%</view>
+        <view class="score-label">正确率</view>
+      </view>
+      <view class="score-item">
+        <view class="score-value">{{formattedDuration}}</view>
+        <view class="score-label">用时</view>
+      </view>
+      <view class="score-item">
+        <view class="score-value">{{score}}</view>
+        <view class="score-label">得分</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="detail-section">
+    <view class="section-title">答题详情</view>
+    <view class="answer-list">
+      <view 
+        wx:for="{{answers}}" 
+        wx:key="index"
+        class="answer-item"
+      >
+        <view class="answer-status {{item.is_correct ? 'correct' : 'wrong'}}">
+          {{item.is_correct ? '✓' : '✗'}}
+        </view>
+        <view class="answer-text">第{{index + 1}}题</view>
+        <view class="answer-result">{{item.is_correct ? '正确' : '错误'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-section">
+    <button class="btn-action" bindtap="goHome">返回题库</button>
+    <button class="btn-action primary" bindtap="redoQuiz">重新答题</button>
+  </view>
+</view>
