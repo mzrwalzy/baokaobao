@@ -524,7 +524,14 @@ func (h *Handler) ImportQuestions(c *gin.Context) {
 		}
 		if len(row) > 3 {
 			qType := row[3]
-			if qType == "" {
+			switch qType {
+			case "单选":
+				qType = "single"
+			case "多选":
+				qType = "multiple"
+			case "判断":
+				qType = "truefalse"
+			case "":
 				qType = "single"
 			}
 			question.Type = qType
@@ -588,9 +595,9 @@ func (h *Handler) DownloadQuestionTemplate(c *gin.Context) {
 	f.SetColWidth(sheetName, "I", "I", 30)
 
 	examples := [][]interface{}{
-		{"以下哪个是华为的操作系统？", "A", "鸿蒙系统是华为自主研发的操作系统", "single", 2, "鸿蒙", "iOS", "Android", ""},
-		{"以下哪些是编程语言？", "AB", "Java和Python都是高级编程语言", "multiple", 3, "Java", "Python", "Windows", "Excel"},
-		{"Java是一种编程语言。", "true", "判断题直接填true或false", "truefalse", 1, "", "", "", ""},
+		{"以下哪个是华为的操作系统？", "A", "鸿蒙系统是华为自主研发的操作系统", "单选", 2, "鸿蒙", "iOS", "Android", ""},
+		{"以下哪些是编程语言？", "AB", "Java和Python都是高级编程语言", "多选", 3, "Java", "Python", "Windows", "Excel"},
+		{"Java是一种编程语言。", "正确", "判断题填写正确或错误", "判断", 1, "", "", "", ""},
 	}
 
 	for rowIdx, row := range examples {
