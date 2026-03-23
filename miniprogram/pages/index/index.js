@@ -7,15 +7,17 @@ Page({
     loading: false,
     page: 1,
     pageSize: 10,
-    noMore: false
+    noMore: false,
+    isLoggedIn: false
   },
 
   onLoad() {
-    if (!app.globalData.token) {
-      wx.reLaunch({ url: '/pages/login/index' })
-      return
-    }
+    this.setData({ isLoggedIn: !!app.globalData.token })
     this.loadBanks()
+  },
+
+  onShow() {
+    this.setData({ isLoggedIn: !!app.globalData.token })
   },
 
   async loadBanks() {
@@ -51,6 +53,18 @@ Page({
   },
 
   goBankDetail(e) {
+    if (!app.globalData.token) {
+      wx.showModal({
+        title: '提示',
+        content: '登录后即可开始刷题，是否前往登录？',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/login/index' })
+          }
+        }
+      })
+      return
+    }
     const bank = e.currentTarget.dataset.bank
     wx.navigateTo({ 
       url: `/pages/bank-detail/index?id=${bank.id}&name=${encodeURIComponent(bank.name)}` 

@@ -4,16 +4,29 @@ const app = getApp()
 Page({
   data: {
     userInfo: {},
-    stats: {}
+    stats: {},
+    isLoggedIn: false
   },
 
   onLoad() {
-    if (!app.globalData.token) {
-      wx.reLaunch({ url: '/pages/login/index' })
-      return
+    this.setData({ 
+      isLoggedIn: !!app.globalData.token,
+      userInfo: app.globalData.userInfo || {}
+    })
+    if (app.globalData.token) {
+      this.loadData()
     }
-    this.setData({ userInfo: app.globalData.userInfo || {} })
-    this.loadData()
+  },
+
+  onShow() {
+    const isLoggedIn = !!app.globalData.token
+    this.setData({ 
+      isLoggedIn,
+      userInfo: app.globalData.userInfo || {}
+    })
+    if (isLoggedIn) {
+      this.loadData()
+    }
   },
 
   async loadData() {
@@ -31,12 +44,30 @@ Page({
     }
   },
 
+  goLogin() {
+    wx.navigateTo({ url: '/pages/login/index' })
+  },
+
   goPage(e) {
+    if (!app.globalData.token) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后操作',
+        showCancel: false,
+        confirmText: '去登录',
+        success: () => {
+          wx.navigateTo({ url: '/pages/login/index' })
+        }
+      })
+      return
+    }
     const url = e.currentTarget.dataset.url
     wx.showToast({ title: '功能开发中', icon: 'none' })
   },
 
   handleLogout() {
+    if (!app.globalData.token) return
+    
     wx.showModal({
       title: '提示',
       content: '确定要退出登录吗？',
@@ -46,7 +77,11 @@ Page({
             await api.logout()
           } catch (e) {}
           app.clearUserData()
-          wx.reLaunch({ url: '/pages/login/index' })
+          this.setData({ 
+            isLoggedIn: false,
+            userInfo: {},
+            stats: {}
+          })
         }
       }
     })

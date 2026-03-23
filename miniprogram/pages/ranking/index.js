@@ -5,15 +5,17 @@ Page({
   data: {
     tab: 'total',
     list: [],
-    loading: false
+    loading: false,
+    isLoggedIn: false
   },
 
   onLoad() {
-    if (!app.globalData.token) {
-      wx.reLaunch({ url: '/pages/login/index' })
-      return
-    }
+    this.setData({ isLoggedIn: !!app.globalData.token })
     this.loadRanking()
+  },
+
+  onShow() {
+    this.setData({ isLoggedIn: !!app.globalData.token })
   },
 
   switchTab(e) {
@@ -30,7 +32,19 @@ Page({
       const data = await api.getRanking(this.data.tab)
       this.setData({ list: data || [] })
     } catch (e) {
-      wx.showToast({ title: e.message || '加载失败', icon: 'none' })
+      if (e.message && e.message.includes('401')) {
+        wx.showModal({
+          title: '提示',
+          content: '登录后查看完整排行榜，是否前往登录？',
+          success: (res) => {
+            if (res.confirm) {
+              wx.navigateTo({ url: '/pages/login/index' })
+            }
+          }
+        })
+      } else {
+        wx.showToast({ title: e.message || '加载失败', icon: 'none' })
+      }
     } finally {
       this.setData({ loading: false })
     }

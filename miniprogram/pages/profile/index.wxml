@@ -1,13 +1,14 @@
 <view class="profile-page">
   <view class="header-bg">
     <view class="user-card">
-      <view class="avatar">{{userInfo.nickname ? userInfo.nickname.charAt(0) : '?'}}</view>
-      <view class="nickname">{{userInfo.nickname || '用户'}}</view>
-      <view class="vip-info" wx:if="{{userInfo.phone}}">会员到期: 2025-12-31</view>
+      <view class="avatar">{{isLoggedIn ? userInfo.nickname.charAt(0) : '?'}}</view>
+      <view class="nickname">{{isLoggedIn ? userInfo.nickname : '游客'}}</view>
+      <view class="vip-info" wx:if="{{isLoggedIn && userInfo.phone}}">会员到期: 2025-12-31</view>
+      <button wx:if="{{!isLoggedIn}}" class="login-btn" bindtap="goLogin">点击登录</button>
     </view>
   </view>
 
-  <view class="stats-section">
+  <view class="stats-section" wx:if="{{isLoggedIn}}">
     <view class="stats-grid">
       <view class="stats-item">
         <view class="stats-value">{{stats.total_score || 0}}</view>
@@ -32,7 +33,7 @@
     <view class="menu-item" bindtap="goPage" data-url="/pages/profile/wrong-questions">
       <text class="menu-icon">❌</text>
       <text class="menu-text">错题本</text>
-      <text class="menu-badge">{{stats.wrong_count || 0}}题</text>
+      <text class="menu-badge">{{isLoggedIn ? (stats.wrong_count || 0) + '题' : '未登录'}}</text>
       <text class="menu-arrow">›</text>
     </view>
     <view class="menu-item" bindtap="goPage" data-url="/pages/profile/study-record">
@@ -70,7 +71,7 @@
     </view>
   </view>
 
-  <view class="logout-section">
+  <view class="logout-section" wx:if="{{isLoggedIn}}">
     <button class="btn-logout" bindtap="handleLogout">退出登录</button>
   </view>
 </view>
