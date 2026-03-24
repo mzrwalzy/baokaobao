@@ -9,7 +9,7 @@
 
 .header-bg {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40rpx 30rpx 100rpx;
+  padding: env(safe-area-inset-top) 30rpx 80rpx;
 }
 
 .user-card {

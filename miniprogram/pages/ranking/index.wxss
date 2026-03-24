@@ -6,7 +6,7 @@
 
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20rpx 30rpx;
+  padding: env(safe-area-inset-top) 30rpx 20rpx;
   text-align: center;
 }
 
