@@ -1,77 +1,79 @@
 <view class="profile-page">
-  <view class="header-bg">
-    <view class="user-card">
-      <view class="avatar">{{isLoggedIn ? userInfo.nickname.charAt(0) : '?'}}</view>
-      <view class="nickname">{{isLoggedIn ? userInfo.nickname : '游客'}}</view>
-      <view class="vip-info" wx:if="{{isLoggedIn && userInfo.phone}}">会员到期: 2025-12-31</view>
-      <button wx:if="{{!isLoggedIn}}" class="login-btn" bindtap="goLogin">点击登录</button>
-    </view>
-  </view>
-
-  <view class="stats-section" wx:if="{{isLoggedIn}}">
-    <view class="stats-grid">
-      <view class="stats-item">
-        <view class="stats-value">{{stats.total_score || 0}}</view>
-        <view class="stats-label">积分</view>
-      </view>
-      <view class="stats-item">
-        <view class="stats-value">{{stats.study_days || 0}}</view>
-        <view class="stats-label">学习天数</view>
-      </view>
-      <view class="stats-item">
-        <view class="stats-value">{{stats.wrong_count || 0}}</view>
-        <view class="stats-label">错题数</view>
-      </view>
-      <view class="stats-item">
-        <view class="stats-value">{{stats.correct_rate || 0}}%</view>
-        <view class="stats-label">正确率</view>
+  <scroll-view scroll-y class="profile-scroll">
+    <view class="header-bg">
+      <view class="user-card">
+        <view class="avatar">{{isLoggedIn ? userInfo.nickname.charAt(0) : '?'}}</view>
+        <view class="nickname">{{isLoggedIn ? userInfo.nickname : '游客'}}</view>
+        <view class="vip-info" wx:if="{{isLoggedIn && userInfo.phone}}">会员到期: 2025-12-31</view>
+        <button wx:if="{{!isLoggedIn}}" class="login-btn" bindtap="goLogin">点击登录</button>
       </view>
     </view>
-  </view>
 
-  <view class="menu-section">
-    <view class="menu-item" bindtap="goPage" data-url="/pages/profile/wrong-questions">
-      <text class="menu-icon">❌</text>
-      <text class="menu-text">错题本</text>
-      <text class="menu-badge">{{isLoggedIn ? (stats.wrong_count || 0) + '题' : '未登录'}}</text>
-      <text class="menu-arrow">›</text>
+    <view class="stats-section" wx:if="{{isLoggedIn}}">
+      <view class="stats-grid">
+        <view class="stats-item">
+          <view class="stats-value">{{stats.total_score || 0}}</view>
+          <view class="stats-label">积分</view>
+        </view>
+        <view class="stats-item">
+          <view class="stats-value">{{stats.study_days || 0}}</view>
+          <view class="stats-label">学习天数</view>
+        </view>
+        <view class="stats-item">
+          <view class="stats-value">{{stats.wrong_count || 0}}</view>
+          <view class="stats-label">错题数</view>
+        </view>
+        <view class="stats-item">
+          <view class="stats-value">{{stats.correct_rate || 0}}%</view>
+          <view class="stats-label">正确率</view>
+        </view>
+      </view>
     </view>
-    <view class="menu-item" bindtap="goPage" data-url="/pages/profile/study-record">
-      <text class="menu-icon">📚</text>
-      <text class="menu-text">学习记录</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goPage" data-url="/pages/profile/my-banks">
-      <text class="menu-icon">⭐</text>
-      <text class="menu-text">收藏题库</text>
-      <text class="menu-arrow">›</text>
-    </view>
-  </view>
 
-  <view class="menu-section">
-    <view class="menu-item" bindtap="goPage" data-url="/pages/profile/settings">
-      <text class="menu-icon">⚙️</text>
-      <text class="menu-text">设置</text>
-      <text class="menu-arrow">›</text>
+    <view class="menu-section">
+      <view class="menu-item" bindtap="goPage" data-url="/pages/profile/wrong-questions">
+        <text class="menu-icon">❌</text>
+        <text class="menu-text">错题本</text>
+        <text class="menu-badge">{{isLoggedIn ? (stats.wrong_count || 0) + '题' : '未登录'}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/profile/study-record">
+        <text class="menu-icon">📚</text>
+        <text class="menu-text">学习记录</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/profile/my-banks">
+        <text class="menu-icon">⭐</text>
+        <text class="menu-text">收藏题库</text>
+        <text class="menu-arrow">›</text>
+      </view>
     </view>
-    <view class="menu-item" bindtap="goPage" data-url="/pages/profile/help">
-      <text class="menu-icon">📖</text>
-      <text class="menu-text">使用帮助</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goPage" data-url="/pages/profile/feedback">
-      <text class="menu-icon">📝</text>
-      <text class="menu-text">意见反馈</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goPage" data-url="/pages/profile/about">
-      <text class="menu-icon">ℹ️</text>
-      <text class="menu-text">关于我们</text>
-      <text class="menu-arrow">›</text>
-    </view>
-  </view>
 
-  <view class="logout-section" wx:if="{{isLoggedIn}}">
-    <button class="btn-logout" bindtap="handleLogout">退出登录</button>
-  </view>
+    <view class="menu-section">
+      <view class="menu-item" bindtap="goPage" data-url="/pages/profile/settings">
+        <text class="menu-icon">⚙️</text>
+        <text class="menu-text">设置</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/profile/help">
+        <text class="menu-icon">📖</text>
+        <text class="menu-text">使用帮助</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/profile/feedback">
+        <text class="menu-icon">📝</text>
+        <text class="menu-text">意见反馈</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/profile/about">
+        <text class="menu-icon">ℹ️</text>
+        <text class="menu-text">关于我们</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="logout-section" wx:if="{{isLoggedIn}}">
+      <button class="btn-logout" bindtap="handleLogout">退出登录</button>
+    </view>
+  </scroll-view>
 </view>

@@ -1,12 +1,15 @@
 .profile-page {
-  min-height: 100vh;
+  height: 100vh;
   background: #F5F5F5;
-  padding-bottom: 200rpx;
+}
+
+.profile-scroll {
+  height: 100%;
 }
 
 .header-bg {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 60rpx 30rpx 120rpx;
+  padding: 40rpx 30rpx 100rpx;
 }
 
 .user-card {

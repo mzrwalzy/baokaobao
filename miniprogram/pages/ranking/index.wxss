@@ -1,12 +1,14 @@
 .ranking-page {
-  min-height: 100vh;
+  height: 100vh;
   background: #F5F5F5;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 30rpx;
-  padding-top: calc(30rpx + env(safe-area-inset-top));
+  padding: 20rpx 30rpx;
+  padding-top: calc(20rpx + env(safe-area-inset-top));
   text-align: center;
 }
 
@@ -25,7 +27,7 @@
 .tab-item {
   flex: 1;
   text-align: center;
-  padding: 30rpx 0;
+  padding: 24rpx 0;
   font-size: 30rpx;
   color: #666;
   position: relative;
@@ -49,14 +51,15 @@
 }
 
 .content {
-  height: calc(100vh - 250rpx);
+  flex: 1;
+  height: 0;
 }
 
 .top-three {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  padding: 60rpx 30rpx 30rpx;
+  padding: 40rpx 30rpx 20rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
@@ -73,7 +76,7 @@
 
 .rank-item.second {
   order: 1;
-  padding-bottom: 30rpx;
+  padding-bottom: 20rpx;
 }
 
 .rank-item.third {
