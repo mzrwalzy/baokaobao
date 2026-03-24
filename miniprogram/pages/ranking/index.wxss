@@ -1,14 +1,12 @@
 .ranking-page {
-  height: 100vh;
+  min-height: 100vh;
   background: #F5F5F5;
-  display: flex;
-  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20rpx 30rpx;
-  padding-top: calc(20rpx + env(safe-area-inset-top));
   text-align: center;
 }
 
@@ -50,16 +48,11 @@
   border-radius: 3rpx;
 }
 
-.content {
-  flex: 1;
-  height: 0;
-}
-
 .top-three {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  padding: 40rpx 30rpx 20rpx;
+  padding: 30rpx 30rpx 20rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
@@ -67,7 +60,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 20rpx;
+  padding: 0 15rpx;
 }
 
 .rank-item.first {
@@ -76,38 +69,38 @@
 
 .rank-item.second {
   order: 1;
-  padding-bottom: 20rpx;
+  padding-bottom: 15rpx;
 }
 
 .rank-item.third {
   order: 3;
-  padding-bottom: 10rpx;
+  padding-bottom: 5rpx;
 }
 
 .avatar {
-  font-size: 60rpx;
-  margin-bottom: 10rpx;
+  font-size: 50rpx;
+  margin-bottom: 8rpx;
 }
 
 .first .avatar {
-  font-size: 80rpx;
+  font-size: 70rpx;
 }
 
 .nickname {
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: #fff;
-  margin-bottom: 8rpx;
-  max-width: 150rpx;
+  margin-bottom: 6rpx;
+  max-width: 120rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .score {
-  font-size: 24rpx;
+  font-size: 22rpx;
   color: rgba(255, 255, 255, 0.8);
   background: rgba(255, 255, 255, 0.2);
-  padding: 6rpx 20rpx;
+  padding: 4rpx 16rpx;
   border-radius: 20rpx;
 }
 
@@ -125,8 +118,8 @@
 }
 
 .rank-num {
-  width: 60rpx;
-  font-size: 32rpx;
+  width: 50rpx;
+  font-size: 30rpx;
   font-weight: bold;
   color: #999;
 }
@@ -139,25 +132,25 @@
 }
 
 .user-avatar {
-  width: 72rpx;
-  height: 72rpx;
+  width: 70rpx;
+  height: 70rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 32rpx;
+  font-size: 30rpx;
   font-weight: bold;
 }
 
 .user-name {
-  font-size: 30rpx;
+  font-size: 28rpx;
   color: #333;
 }
 
 .user-score {
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: #667eea;
   font-weight: 500;
 }
