@@ -51,6 +51,12 @@ func SetupRouterWithDB(db *gorm.DB) *gin.Engine {
 			user.POST("/avatar", h.UploadAvatar)
 		}
 
+		questionBank := api.Group("/question_banks")
+		{
+			questionBank.GET("", h.ListPublicQuestionBanks)
+			questionBank.GET("/:id", h.GetPublicQuestionBankDetail)
+		}
+
 		question := api.Group("/questions")
 		question.Use(middleware.MiniProgramAuth())
 		{

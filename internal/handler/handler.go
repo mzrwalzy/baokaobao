@@ -352,6 +352,31 @@ func (h *Handler) ListQuestionBanks(c *gin.Context) {
 	response.Page(c, banks, total, page, pageSize)
 }
 
+func (h *Handler) ListPublicQuestionBanks(c *gin.Context) {
+	page := parseIntDefault(c.Query("page"), 1)
+	pageSize := parseIntDefault(c.Query("page_size"), 20)
+
+	banks, total, err := h.svc.Question.ListQuestionBanks(page, pageSize)
+	if err != nil {
+		response.InternalError(c, err.Error())
+		return
+	}
+
+	response.Page(c, banks, total, page, pageSize)
+}
+
+func (h *Handler) GetPublicQuestionBankDetail(c *gin.Context) {
+	id := parseInt64(c.Param("id"))
+
+	bank, err := h.svc.Question.GetQuestionBank(id)
+	if err != nil {
+		response.InternalError(c, err.Error())
+		return
+	}
+
+	response.Success(c, bank)
+}
+
 func (h *Handler) CreateQuestionBank(c *gin.Context) {
 	var bank model.QuestionBank
 	if err := c.ShouldBindJSON(&bank); err != nil {
