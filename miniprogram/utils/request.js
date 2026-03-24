@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:10002/api/v1'
+const BASE_URL = 'http://118.196.24.214:10002/api/v1'
 
 const request = (options) => {
   return new Promise((resolve, reject) => {
