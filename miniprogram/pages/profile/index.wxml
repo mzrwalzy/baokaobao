@@ -5,7 +5,7 @@
         <view class="avatar">{{isLoggedIn ? userInfo.nickname.charAt(0) : '?'}}</view>
         <view class="nickname">{{isLoggedIn ? userInfo.nickname : '游客'}}</view>
         <view class="vip-info" wx:if="{{isLoggedIn && userInfo.phone}}">会员到期: 2025-12-31</view>
-        <button wx:if="{{!isLoggedIn}}" class="login-btn" bindtap="goLogin">点击登录</button>
+        <button wx:if="{{!isLoggedIn}}" class="login-btn" bindtap="onQuickLogin">微信一键登录</button>
       </view>
     </view>
 

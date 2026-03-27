@@ -44,8 +44,53 @@ Page({
     }
   },
 
-  goLogin() {
-    wx.navigateTo({ url: '/pages/login/index' })
+  onQuickLogin() {
+    wx.showLoading({ title: '登录中...' })
+    wx.login({
+      success: (res) => {
+        if (res.code) {
+          api.loginByWechat(res.code).then(result => {
+            wx.hideLoading()
+            const app = getApp()
+            app.setUserData(result.token, result.user)
+            this.setData({ 
+              isLoggedIn: true,
+              userInfo: result.user
+            })
+            this.loadData()
+            wx.showToast({ title: '登录成功', icon: 'success' })
+          }).catch(err => {
+            wx.hideLoading()
+            wx.showToast({ title: err.message || '登录失败', icon: 'none' })
+          })
+        } else {
+          wx.hideLoading()
+          wx.showToast({ title: '获取登录凭证失败', icon: 'none' })
+        }
+      },
+      fail: () => {
+        wx.hideLoading()
+        wx.showToast({ title: '微信登录失败', icon: 'none' })
+      }
+    })
+  },
+
+  doLogin(code) {
+    wx.showLoading({ title: '登录中...' })
+    api.loginByWechat(code).then(result => {
+      wx.hideLoading()
+      const app = getApp()
+      app.setUserData(result.token, result.user)
+      this.setData({ 
+        isLoggedIn: true,
+        userInfo: result.user
+      })
+      this.loadData()
+      wx.showToast({ title: '登录成功', icon: 'success' })
+    }).catch(err => {
+      wx.hideLoading()
+      wx.showToast({ title: err.message || '登录失败', icon: 'none' })
+    })
   },
 
   goPage(e) {
