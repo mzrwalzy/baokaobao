@@ -9,6 +9,7 @@ import (
 	"baokaobao/internal/pkg/wechat"
 	"baokaobao/internal/repository"
 
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -55,10 +56,12 @@ func (s *AuthService) LoginByWechat(code string) (*LoginResponse, error) {
 				Status:  1,
 			}
 			if err := s.repo.CreateUser(user); err != nil {
-				return nil, errors.New("创建用户失败")
+				zap.S().Errorf("CreateUser error: %v", err)
+				return nil, errors.New("创建用户失败: " + err.Error())
 			}
 		} else {
-			return nil, errors.New("查询用户失败")
+			zap.S().Errorf("GetUserByOpenID error: %v, openid: %s", err, result.OpenID)
+			return nil, errors.New("查询用户失败: " + err.Error())
 		}
 	}
 
