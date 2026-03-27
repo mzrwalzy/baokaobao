@@ -6,8 +6,8 @@ import (
 
 type User struct {
 	ID        int64      `gorm:"primaryKey;autoIncrement" json:"id"`
-	OpenID    string     `gorm:"type:varchar(128);uniqueIndex;not null" json:"openid"`
-	UnionID   string     `gorm:"type:varchar(128);index" json:"unionid"`
+	OpenID    string     `gorm:"column:openid;type:varchar(128);uniqueIndex;not null" json:"openid"`
+	UnionID   string     `gorm:"column:unionid;type:varchar(128);index" json:"unionid"`
 	Nickname  string     `gorm:"type:varchar(64)" json:"nickname"`
 	AvatarURL string     `gorm:"type:varchar(256)" json:"avatar_url"`
 	Phone     string     `gorm:"type:varchar(32);uniqueIndex" json:"phone"`
