@@ -20,7 +20,7 @@ const request = (options) => {
             resolve(res.data.data)
           } else if (res.data.code === 401) {
             app.clearUserData()
-            wx.reLaunch({ url: '/pages/login/index' })
+            wx.switchTab({ url: '/pages/profile/index' })
             reject(new Error(res.data.msg || '未授权'))
           } else {
             wx.showToast({ title: res.data.msg || '请求失败', icon: 'none' })

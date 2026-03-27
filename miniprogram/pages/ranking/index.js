@@ -33,15 +33,10 @@ Page({
       this.setData({ list: data || [] })
     } catch (e) {
       if (e.message && e.message.includes('401')) {
-        wx.showModal({
-          title: '提示',
-          content: '登录后查看完整排行榜，是否前往登录？',
-          success: (res) => {
-            if (res.confirm) {
-              wx.navigateTo({ url: '/pages/login/index' })
-            }
-          }
-        })
+        wx.showToast({ title: '请先登录', icon: 'none' })
+        setTimeout(() => {
+          wx.switchTab({ url: '/pages/profile/index' })
+        }, 1500)
       } else {
         wx.showToast({ title: e.message || '加载失败', icon: 'none' })
       }

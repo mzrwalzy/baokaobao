@@ -54,15 +54,10 @@ Page({
 
   goBankDetail(e) {
     if (!app.globalData.token) {
-      wx.showModal({
-        title: '提示',
-        content: '登录后即可开始刷题，是否前往登录？',
-        success: (res) => {
-          if (res.confirm) {
-            wx.navigateTo({ url: '/pages/login/index' })
-          }
-        }
-      })
+      wx.showToast({ title: '请先登录', icon: 'none' })
+      setTimeout(() => {
+        wx.switchTab({ url: '/pages/profile/index' })
+      }, 1500)
       return
     }
     const bank = e.currentTarget.dataset.bank

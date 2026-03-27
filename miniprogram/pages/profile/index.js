@@ -75,38 +75,14 @@ Page({
     })
   },
 
-  doLogin(code) {
-    wx.showLoading({ title: '登录中...' })
-    api.loginByWechat(code).then(result => {
-      wx.hideLoading()
-      const app = getApp()
-      app.setUserData(result.token, result.user)
-      this.setData({ 
-        isLoggedIn: true,
-        userInfo: result.user
-      })
-      this.loadData()
-      wx.showToast({ title: '登录成功', icon: 'success' })
-    }).catch(err => {
-      wx.hideLoading()
-      wx.showToast({ title: err.message || '登录失败', icon: 'none' })
-    })
-  },
-
   goPage(e) {
     if (!app.globalData.token) {
-      wx.showModal({
-        title: '提示',
-        content: '请先登录后操作',
-        showCancel: false,
-        confirmText: '去登录',
-        success: () => {
-          wx.navigateTo({ url: '/pages/login/index' })
-        }
-      })
+      wx.showToast({ title: '请先登录', icon: 'none' })
+      setTimeout(() => {
+        wx.switchTab({ url: '/pages/profile/index' })
+      }, 1500)
       return
     }
-    const url = e.currentTarget.dataset.url
     wx.showToast({ title: '功能开发中', icon: 'none' })
   },
 
