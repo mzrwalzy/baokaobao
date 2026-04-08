@@ -6,7 +6,7 @@
 
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: env(safe-area-inset-top) 30rpx 20rpx;
+  padding: calc(20rpx + env(safe-area-inset-top)) 30rpx 40rpx;
   text-align: center;
 }
 
@@ -20,6 +20,7 @@
   display: flex;
   background: #fff;
   padding: 0 100rpx;
+  margin-top: 20rpx;
 }
 
 .tab-item {
