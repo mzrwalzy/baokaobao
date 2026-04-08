@@ -9,7 +9,7 @@ type User struct {
 	OpenID    string     `gorm:"column:openid;type:varchar(128);uniqueIndex;not null" json:"openid"`
 	UnionID   string     `gorm:"column:unionid;type:varchar(128);index" json:"unionid"`
 	Nickname  string     `gorm:"type:varchar(64)" json:"nickname"`
-	AvatarURL string     `gorm:"type:varchar(256)" json:"avatar_url"`
+	AvatarURL string     `gorm:"column:avatar_url;type:varchar(256)" json:"avatar_url"`
 	Phone     string     `gorm:"type:varchar(32);uniqueIndex" json:"phone"`
 	Status    int8       `gorm:"type:tinyint(1);default:1;index" json:"status"`
 	LastLogin *time.Time `json:"last_login,omitempty"`
