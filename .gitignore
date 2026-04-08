@@ -61,4 +61,4 @@ miniprogram/node_modules/
 miniprogram/dist/
 
 # Scripts
-# push-all.sh
+push-all.sh
