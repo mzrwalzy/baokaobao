@@ -1,0 +1,67 @@
+<view class="bank-detail-page">
+  <view class="header">
+    <view class="header-top">
+      <view class="back-btn" bindtap="goBack">‹</view>
+      <text class="header-title">{{bankName}}</text>
+      <button class="share-btn" open-type="share">分享</button>
+    </view>
+  </view>
+
+  <view class="content">
+    <view class="bank-header">
+      <view class="bank-icon">📚</view>
+      <view class="bank-title">{{bankName}}</view>
+      <view class="bank-price" wx:if="{{bankInfo.price > 0}}">付费题库 ￥{{bankInfo.price}}</view>
+      <view class="bank-access-badge success" wx:if="{{accessStatus && accessStatus.has_access}}">已开通</view>
+      <view class="bank-access-badge warning" wx:elif="{{accessStatus && accessStatus.requires_purchase}}">待开通</view>
+      <view class="bank-access-badge neutral" wx:else>免费可刷</view>
+      <view class="bank-meta">
+        <text>题目数量: {{bankInfo.question_num || 0}}</text>
+        <text>{{accessStatus ? accessStatus.access_description : (bankInfo.price > 0 ? '登录后校验权限' : '免费练习')}}</text>
+      </view>
+      <view class="bank-access-tip" wx:if="{{!accessStatus && bankInfo.price > 0}}">登录后可自动校验当前账号是否已开通</view>
+      <view class="bank-access-tip" wx:elif="{{accessStatus && accessStatus.requires_purchase && !accessStatus.has_access}}">当前账号尚未开通该题库权限</view>
+      <view class="bank-access-tip" wx:elif="{{accessStatus && accessStatus.has_access}}">当前账号已具备该题库访问权限</view>
+    </view>
+
+    <view class="card description-card">
+      <view class="card-title">📖 题目简介</view>
+      <text class="description">{{bankInfo.description || '暂无简介'}}</text>
+    </view>
+
+    <view class="card mode-section">
+      <view class="card-title">🎯 刷题模式</view>
+      <view class="mode-grid">
+        <view 
+          class="mode-item {{mode === 'practice' ? 'active' : ''}}"
+          bindtap="selectMode" data-mode="practice"
+        >
+          <text class="mode-icon">📝</text>
+          <text class="mode-name">练习模式</text>
+        </view>
+        <view 
+          class="mode-item {{mode === 'exam' ? 'active' : ''}}"
+          bindtap="selectMode" data-mode="exam"
+        >
+          <text class="mode-icon">📋</text>
+          <text class="mode-name">考试模式</text>
+        </view>
+        <view 
+          class="mode-item {{mode === 'memorize' ? 'active' : ''}}"
+          bindtap="selectMode" data-mode="memorize"
+        >
+          <text class="mode-icon">🧠</text>
+          <text class="mode-name">背题模式</text>
+        </view>
+        <view class="mode-item" bindtap="goWrongQuestions">
+          <text class="mode-icon">❌</text>
+          <text class="mode-name">错题重做</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="start-section">
+      <button class="btn-start" bindtap="startQuiz">{{actionText}}</button>
+    </view>
+  </view>
+</view>

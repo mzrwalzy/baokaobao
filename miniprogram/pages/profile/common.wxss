@@ -1,0 +1,141 @@
+.record-page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.record-page.with-fixed-header {
+  padding-top: 238rpx;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, #17324D 0%, #2F6666 100%);
+  padding: 28rpx 30rpx 26rpx;
+  padding-top: calc(constant(safe-area-inset-top) + 60rpx);
+  padding-top: calc(env(safe-area-inset-top) + 60rpx);
+  color: #fff;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72rpx;
+}
+
+.back-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.header-title {
+  flex: 1;
+  margin: 0 20rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-placeholder {
+  width: 72rpx;
+  height: 72rpx;
+}
+
+.record-list {
+  margin-top: 24rpx;
+}
+
+.record-card,
+.empty-card {
+  margin-bottom: 22rpx;
+  padding: 28rpx;
+  border-radius: 28rpx;
+  background: #fff;
+  box-shadow: 0 12rpx 34rpx rgba(17, 37, 54, 0.08);
+}
+
+.card-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18rpx;
+}
+
+.muted {
+  color: #98A2A8;
+  font-size: 22rpx;
+}
+
+.bank-name,
+.question-title {
+  color: #1F2D36;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.question-content {
+  color: #5F6B73;
+  font-size: 28rpx;
+  line-height: 1.7;
+}
+
+.info-panel {
+  margin-top: 22rpx;
+  padding: 22rpx 24rpx;
+  border-radius: 22rpx;
+  background: #F7F9F8;
+}
+
+.info-label {
+  color: #80909A;
+  font-size: 24rpx;
+}
+
+.info-value {
+  margin-top: 8rpx;
+  color: #1F2D36;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.empty-card {
+  margin-top: 28rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 54rpx;
+}
+
+.empty-title {
+  margin-top: 10rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1F2D36;
+}
+
+.empty-text,
+.loading {
+  margin-top: 10rpx;
+  text-align: center;
+  color: #8A969C;
+  font-size: 24rpx;
+}

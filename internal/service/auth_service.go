@@ -1,0 +1,154 @@
+package service
+
+import (
+	"errors"
+	"time"
+
+	"baokaobao/internal/model"
+	"baokaobao/internal/pkg/jwt"
+	"baokaobao/internal/pkg/wechat"
+	"baokaobao/internal/repository"
+
+	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
+)
+
+type AuthService struct {
+	repo      *repository.Repository
+	jwtSDK    *jwt.JWT
+	wechatSDK *wechat.WechatSDK
+}
+
+func NewAuthService(repo *repository.Repository, jwtSDK *jwt.JWT, wechatSDK *wechat.WechatSDK) *AuthService {
+	return &AuthService{
+		repo:      repo,
+		jwtSDK:    jwtSDK,
+		wechatSDK: wechatSDK,
+	}
+}
+
+type LoginByWechatRequest struct {
+	Code string `json:"code" binding:"required"`
+}
+
+type LoginResponse struct {
+	Token string             `json:"token"`
+	User  model.UserResponse `json:"user"`
+}
+
+type AdminLoginRequest = model.AdminLoginRequest
+
+type AdminLoginResponse = model.AdminLoginResponse
+
+func (s *AuthService) LoginByWechat(code string) (*LoginResponse, error) {
+	result, err := s.wechatSDK.Code2Session(code)
+	if err != nil {
+		return nil, errors.New("微信登录失败: " + err.Error())
+	}
+
+	user, err := s.repo.GetUserByOpenID(result.OpenID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			user = &model.User{
+				OpenID:  result.OpenID,
+				UnionID: result.UnionID,
+				Status:  1,
+			}
+			if err := s.repo.CreateUser(user); err != nil {
+				zap.S().Errorf("CreateUser error: %v", err)
+				return nil, errors.New("创建用户失败: " + err.Error())
+			}
+		} else {
+			zap.S().Errorf("GetUserByOpenID error: %v, openid: %s", err, result.OpenID)
+			return nil, errors.New("查询用户失败: " + err.Error())
+		}
+	}
+
+	if user.Status != 1 {
+		return nil, model.ErrUserBanned
+	}
+
+	now := time.Now()
+	user.LastLogin = &now
+	if err := s.repo.UpdateUser(user); err != nil {
+		zap.S().Errorf("UpdateUser last_login error: %v", err)
+	}
+
+	token, err := s.jwtSDK.GenerateToken(user.ID, user.OpenID, "mini", "")
+	if err != nil {
+		return nil, errors.New("生成token失败")
+	}
+
+	return &LoginResponse{
+		Token: token,
+		User: model.UserResponse{
+			ID:        user.ID,
+			OpenID:    user.OpenID,
+			Nickname:  user.Nickname,
+			AvatarURL: user.AvatarURL,
+			Phone:     user.Phone,
+		},
+	}, nil
+}
+
+func (s *AuthService) AdminLogin(req *AdminLoginRequest) (*AdminLoginResponse, error) {
+	admin, err := s.repo.GetAdminByUsername(req.Username)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, model.ErrInvalidCredentials
+		}
+		return nil, errors.New("查询用户失败")
+	}
+
+	if admin.Status != 1 {
+		return nil, errors.New("账号已被禁用")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(admin.PasswordHash), []byte(req.Password)); err != nil {
+		return nil, model.ErrInvalidCredentials
+	}
+
+	now := time.Now()
+	admin.LastLogin = &now
+	if err := s.repo.UpdateAdmin(admin); err != nil {
+		zap.S().Errorf("UpdateAdmin last_login error: %v", err)
+	}
+
+	token, err := s.jwtSDK.GenerateToken(admin.ID, admin.Username, "admin", admin.Role)
+	if err != nil {
+		return nil, errors.New("生成token失败")
+	}
+
+	return &AdminLoginResponse{
+		Token: token,
+		User: model.AdminResponse{
+			ID:       admin.ID,
+			Username: admin.Username,
+			Nickname: admin.Nickname,
+			Role:     admin.Role,
+		},
+	}, nil
+}
+
+func (s *AuthService) DecryptPhone(userID int64, code string) (string, error) {
+	result, err := s.wechatSDK.GetPhoneNumber(code)
+	if err != nil {
+		return "", errors.New("获取手机号失败: " + err.Error())
+	}
+
+	phone := result.PhoneInfo.PhoneNumber
+	if err := s.repo.UpdateUserPhone(userID, phone); err != nil {
+		return "", errors.New("更新手机号失败")
+	}
+
+	return phone, nil
+}
+
+func (s *AuthService) GetWechatSDK() *wechat.WechatSDK {
+	return s.wechatSDK
+}
+
+func (s *AuthService) Logout(token string, expiresAt time.Time) error {
+	return s.repo.AddToBlacklist(token, expiresAt)
+}

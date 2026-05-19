@@ -1,0 +1,61 @@
+<view class="header">
+  <view class="header-top">
+    <view class="back-btn" bindtap="goBack">‹</view>
+    <text class="header-title">意见反馈</text>
+    <view class="header-placeholder"></view>
+  </view>
+</view>
+
+<view class="record-page with-fixed-header">
+  <view class="feedback-form">
+    <view class="form-card">
+      <text class="form-label">反馈类型</text>
+      <view class="type-options">
+        <view 
+          class="type-option {{type === 'suggestion' ? 'active' : ''}}" 
+          bindtap="selectType" 
+          data-type="suggestion"
+        >功能建议</view>
+        <view 
+          class="type-option {{type === 'bug' ? 'active' : ''}}" 
+          bindtap="selectType" 
+          data-type="bug"
+        >Bug 反馈</view>
+        <view 
+          class="type-option {{type === 'content' ? 'active' : ''}}" 
+          bindtap="selectType" 
+          data-type="content"
+        >内容错误</view>
+        <view 
+          class="type-option {{type === 'other' ? 'active' : ''}}" 
+          bindtap="selectType" 
+          data-type="other"
+        >其他</view>
+      </view>
+    </view>
+
+    <view class="form-card">
+      <text class="form-label">反馈内容</text>
+      <textarea 
+        class="form-textarea" 
+        placeholder="请详细描述你的问题或建议..." 
+        maxlength="500"
+        bindinput="onContentInput"
+        value="{{content}}"
+      />
+    </view>
+
+    <view class="form-card">
+      <text class="form-label">联系方式（选填）</text>
+      <input 
+        class="form-input" 
+        placeholder="手机号或微信号，方便我们回访" 
+        maxlength="50"
+        bindinput="onContactInput"
+        value="{{contact}}"
+      />
+    </view>
+
+    <button class="btn-submit {{submitting ? 'disabled' : ''}}" bindtap="submitFeedback">{{submitting ? '提交中...' : '提交反馈'}}</button>
+  </view>
+</view>

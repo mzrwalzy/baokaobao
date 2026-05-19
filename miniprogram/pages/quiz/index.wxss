@@ -1,0 +1,265 @@
+.quiz-page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: linear-gradient(135deg, #17324D 0%, #2F6666 100%);
+  padding: 28rpx 30rpx 24rpx;
+  padding-top: calc(constant(safe-area-inset-top) + 44rpx);
+  padding-top: calc(env(safe-area-inset-top) + 44rpx);
+  color: #fff;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.back-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.header-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.header-title {
+  max-width: 100%;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-subtitle {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.progress-info {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.submit-btn {
+  min-width: 112rpx;
+  height: 72rpx;
+  padding: 0 24rpx;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 36rpx;
+  font-size: 26rpx;
+  line-height: 72rpx;
+  text-align: center;
+}
+
+.progress-row {
+  margin-top: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.progress-bar {
+  height: 10rpx;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.progress-fill {
+  height: 100%;
+  background: #fff;
+  transition: width 0.3s;
+}
+
+.type-badge {
+  padding: 10rpx 22rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 22rpx;
+}
+
+.content {
+  flex: 1;
+  padding: 30rpx;
+  padding-bottom: 160rpx;
+  height: calc(100vh - 200rpx);
+}
+
+.question-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 44rpx 34rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(23, 50, 77, 0.06);
+}
+
+.question-content {
+  font-size: 32rpx;
+  color: #333;
+  line-height: 1.8;
+}
+
+.question-tip {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #2F6666;
+}
+
+.question-images {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+
+.question-image {
+  width: 100%;
+  border-radius: 16rpx;
+  background: #f5f5f5;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.option-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  border: 4rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.option-item.selected {
+  border-color: #2F6666;
+  background: rgba(47, 102, 102, 0.12);
+}
+
+.option-item.correct {
+  border-color: #67C23A;
+  background: rgba(103, 194, 58, 0.1);
+}
+
+.option-item.wrong {
+  border-color: #F56C6C;
+  background: rgba(245, 108, 108, 0.1);
+}
+
+.option-key {
+  width: 60rpx;
+  height: 60rpx;
+  background: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #666;
+}
+
+.option-item.selected .option-key {
+  background: #2F6666;
+  color: #fff;
+}
+
+.option-value {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.option-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.option-image {
+  width: 100%;
+  border-radius: 12rpx;
+  background: #f5f5f5;
+}
+
+.analysis-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-top: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(23, 50, 77, 0.06);
+}
+
+.analysis-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #17324D;
+  margin-bottom: 16rpx;
+}
+
+.analysis-content {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.8;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30rpx;
+  padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  display: flex;
+  gap: 20rpx;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.btn-nav {
+  flex: 1;
+  height: 88rpx;
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-nav.primary {
+  background: #17324D;
+  color: #fff;
+}
+
+.btn-nav.disabled {
+  opacity: 0.5;
+}

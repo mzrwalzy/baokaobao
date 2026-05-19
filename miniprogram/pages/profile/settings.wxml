@@ -1,0 +1,47 @@
+<view class="header">
+  <view class="header-top">
+    <view class="back-btn" bindtap="goBack">‹</view>
+    <text class="header-title">设置</text>
+    <view class="header-placeholder"></view>
+  </view>
+</view>
+
+<view class="record-page with-fixed-header">
+  <view class="settings-list">
+    <view class="settings-card">
+      <view class="settings-title">答题设置</view>
+      <view class="settings-item">
+        <view>
+          <view class="settings-label">答题音效</view>
+          <view class="settings-desc">答对答错时播放提示音</view>
+        </view>
+        <view class="switch-wrap">
+          <switch checked="{{settings.soundEnabled}}" bindchange="toggleSound" color="#2F6666" />
+        </view>
+      </view>
+      <view class="settings-item">
+        <view>
+          <view class="settings-label">震动反馈</view>
+          <view class="settings-desc">答题时震动提示</view>
+        </view>
+        <view class="switch-wrap">
+          <switch checked="{{settings.vibrationEnabled}}" bindchange="toggleVibration" color="#2F6666" />
+        </view>
+      </view>
+    </view>
+
+    <view class="settings-card">
+      <view class="settings-title">缓存管理</view>
+      <view class="settings-item">
+        <view>
+          <view class="settings-label">清除缓存</view>
+          <view class="settings-desc">清除本地图片和数据缓存</view>
+        </view>
+        <view class="settings-value">{{cacheSize}}</view>
+      </view>
+      <button class="btn-clear" bindtap="clearCache">清除缓存</button>
+    </view>
+  </view>
+
+  <view class="version-info">版本 {{version}}</view>
+</view>

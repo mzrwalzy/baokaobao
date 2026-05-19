@@ -1,0 +1,43 @@
+<view class="header">
+  <view class="header-top">
+    <view class="back-btn" bindtap="goBack">‹</view>
+    <text class="header-title">使用帮助</text>
+    <view class="header-placeholder"></view>
+  </view>
+</view>
+
+<view class="record-page with-fixed-header">
+  <view class="help-list">
+    <view class="help-card">
+      <view class="help-question"><text class="help-icon">📝</text> 三种刷题模式有什么区别？</view>
+      <view class="help-answer">
+        练习模式：逐题作答，提交后立即显示答案和解析，适合日常学习巩固。
+        考试模式：模拟真实考试环境，限时作答，全部提交后显示成绩，适合检验学习成果。
+        背题模式：直接显示正确答案和解析，适合快速记忆和考前突击。
+      </view>
+    </view>
+
+    <view class="help-card">
+      <view class="help-question"><text class="help-icon">❌</text> 错题本怎么使用？</view>
+      <view class="help-answer">
+        在练习模式中答错的题目会自动加入错题本。你可以在"我的"页面进入错题本，随时查看和重做错题。
+        建议定期复习错题本，针对性强化薄弱环节。
+      </view>
+    </view>
+
+    <view class="help-card">
+      <view class="help-question"><text class="help-icon">⭐</text> 积分和正确率是怎么计算的？</view>
+      <view class="help-answer">
+        答对题目获得相应积分，连续答对可获得额外加分。正确率 = 答对题数 / 总答题数 × 100%。
+        排行榜按总积分排名，积分越高排名越靠前。
+      </view>
+    </view>
+
+    <view class="help-card">
+      <view class="help-question"><text class="help-icon">📚</text> 已购买题库怎么使用？</view>
+      <view class="help-answer">
+        在"我的"页面点击"已购买题库"，可以看到所有已开通的题库。点击任意题库即可进入题库详情页，选择刷题模式开始学习。
+      </view>
+    </view>
+  </view>
+</view>

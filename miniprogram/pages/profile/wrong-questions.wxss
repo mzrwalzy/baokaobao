@@ -1,0 +1,40 @@
+@import "./common.wxss";
+
+.pill {
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.pill.danger {
+  background: rgba(245, 108, 108, 0.12);
+  color: #D94D4D;
+}
+
+.question-title {
+  margin-bottom: 12rpx;
+}
+
+.info-value {
+  color: #2F6666;
+}
+
+.analysis-block {
+  margin-top: 22rpx;
+  padding: 22rpx 24rpx;
+  border-radius: 22rpx;
+  background: #F7F9F8;
+}
+
+.analysis-label {
+  color: #80909A;
+  font-size: 24rpx;
+}
+
+.analysis {
+  margin-top: 8rpx;
+  color: #5F6B73;
+  font-size: 28rpx;
+  line-height: 1.7;
+}

@@ -1,0 +1,79 @@
+<view class="quiz-page">
+  <view class="header">
+    <view class="header-top">
+      <view class="back-btn" bindtap="handleBack">‹</view>
+      <view class="header-center">
+        <view class="header-title">{{bankName}}</view>
+        <view class="header-subtitle">{{mode === 'exam' ? '剩余时间 ' + countdownText : modeText}}</view>
+      </view>
+      <view class="submit-btn" bindtap="handleSubmit">交卷</view>
+    </view>
+    <view class="progress-row">
+      <view class="progress-info">第 {{currentIndex + 1}} / {{totalQuestions}} 题</view>
+      <view class="type-badge">{{typeText}}</view>
+    </view>
+  </view>
+
+  <view class="progress-bar">
+    <view class="progress-fill" style="width: {{progress}}%"></view>
+  </view>
+
+  <scroll-view scroll-y class="content">
+    <view class="question-card">
+      <view class="question-content">{{currentQuestion.content}}</view>
+      <view class="question-tip" wx:if="{{currentQuestion.type === 'multiple'}}">多选题，可重复点击取消选项</view>
+      <view class="question-images" wx:if="{{currentQuestion.imageList && currentQuestion.imageList.length}}">
+        <image
+          wx:for="{{currentQuestion.imageList}}"
+          wx:key="*this"
+          class="question-image"
+          src="{{item}}"
+          mode="widthFix"
+          bindtap="previewImages"
+          data-current="{{item}}"
+          data-urls="{{currentQuestion.imageList}}"
+        />
+      </view>
+    </view>
+
+    <view class="options-list">
+      <view 
+        wx:for="{{currentQuestion.options}}" 
+        wx:key="id"
+        class="option-item {{item.isSelected ? 'selected' : ''}} {{item.isCorrectOption ? 'correct' : ''}} {{item.isWrongSelection ? 'wrong' : ''}}"
+        bindtap="selectOption"
+        data-key="{{item.option_key}}"
+      >
+        <view class="option-key">{{item.option_key}}</view>
+        <view class="option-body">
+          <view class="option-value">{{item.option_value}}</view>
+          <image
+            wx:if="{{item.option_image}}"
+            class="option-image"
+            src="{{item.option_image}}"
+            mode="widthFix"
+            bindtap="previewImages"
+            data-current="{{item.option_image}}"
+            data-urls="{{[item.option_image]}}"
+          />
+        </view>
+      </view>
+    </view>
+
+    <view class="analysis-card" wx:if="{{showResult && currentQuestion.analysis}}">
+      <view class="analysis-title">答案解析</view>
+      <view class="analysis-content">{{currentQuestion.analysis}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="footer">
+    <button 
+      class="btn-nav {{currentIndex === 0 ? 'disabled' : ''}}" 
+      bindtap="prevQuestion"
+    >上一题</button>
+    <button 
+      class="btn-nav primary" 
+      bindtap="handleSubmit"
+    >{{primaryButtonText}}</button>
+  </view>
+</view>

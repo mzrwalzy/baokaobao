@@ -1,0 +1,33 @@
+@import "./common.wxss";
+
+.help-list {
+  margin-top: 24rpx;
+}
+
+.help-card {
+  margin-bottom: 22rpx;
+  padding: 28rpx;
+  border-radius: 28rpx;
+  background: #fff;
+  box-shadow: 0 12rpx 34rpx rgba(17, 37, 54, 0.08);
+}
+
+.help-question {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1F2D36;
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.help-icon {
+  font-size: 32rpx;
+}
+
+.help-answer {
+  font-size: 28rpx;
+  color: #5F6B73;
+  line-height: 1.7;
+}

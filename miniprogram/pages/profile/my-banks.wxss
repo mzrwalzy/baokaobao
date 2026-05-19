@@ -1,0 +1,59 @@
+@import "./common.wxss";
+
+.bank-card {
+  display: flex;
+  align-items: center;
+}
+
+.cover {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #17324D 0%, #2F6666 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 44rpx;
+  overflow: hidden;
+}
+
+.cover image {
+  width: 100%;
+  height: 100%;
+}
+
+.bank-info {
+  flex: 1;
+  min-width: 0;
+  margin-left: 22rpx;
+}
+
+.bank-desc {
+  margin-top: 8rpx;
+  color: #7B878E;
+  font-size: 24rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 14rpx;
+}
+
+.meta-chip {
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  background: rgba(47, 102, 102, 0.12);
+  color: #2F6666;
+  font-size: 22rpx;
+}
+
+.arrow {
+  color: #B9C2C8;
+  font-size: 44rpx;
+}

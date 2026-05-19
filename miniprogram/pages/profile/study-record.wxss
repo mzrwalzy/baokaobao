@@ -1,0 +1,42 @@
+@import "./common.wxss";
+
+.pill {
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.pill.correct {
+  background: rgba(47, 102, 102, 0.12);
+  color: #2F6666;
+}
+
+.pill.wrong {
+  background: rgba(245, 108, 108, 0.12);
+  color: #D94D4D;
+}
+
+.question-title {
+  margin-bottom: 12rpx;
+}
+
+.info-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.score-badge {
+  min-width: 104rpx;
+  height: 64rpx;
+  padding: 0 18rpx;
+  border-radius: 999rpx;
+  background: rgba(47, 102, 102, 0.12);
+  color: #2F6666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+}

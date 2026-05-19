@@ -1,0 +1,25 @@
+<view class="about-page">
+  <view class="header">
+    <view class="logo">📚</view>
+    <view class="name">刷题宝</view>
+    <view class="version">v1.0.0</view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">关于我们</view>
+    <view class="section-content">
+      刷题宝是一款专注于职业技能提升的刷题小程序，帮助用户高效备考、巩固知识。
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">联系我们</view>
+    <view class="section-content">
+      如有问题或建议，请通过「意见反馈」功能告诉我们。
+    </view>
+  </view>
+
+  <view class="footer">
+    <text>© 2025 刷题宝 版权所有</text>
+  </view>
+</view>

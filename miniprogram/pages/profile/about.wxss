@@ -1,0 +1,54 @@
+.about-page {
+  padding: 40rpx;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.header {
+  text-align: center;
+  padding: 60rpx 0;
+}
+
+.logo {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #17324D;
+  margin-bottom: 10rpx;
+}
+
+.version {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.section-content {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.footer {
+  text-align: center;
+  padding: 40rpx 0;
+  font-size: 24rpx;
+  color: #999;
+}
